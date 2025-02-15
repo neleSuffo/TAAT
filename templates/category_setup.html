@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Setup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-light">
+    <div class="container py-3">
+        <!-- Cool Title -->
+        <div class="title-section mb-4 text-center">
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                <div class="setup-icon">
+                    <i class="fas fa-cogs fa-spin-pulse"></i>
+                </div>
+                <h2 class="setup-title mb-0">Event Designer</h2>
+            </div>
+            <div class="setup-subtitle">Configure your category and events</div>
+        </div>
+        <!-- Category Basic Info -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">Category Setup</h4>
+            </div>
+            <div class="card-body">
+                <form id="categoryBasicForm">
+                    <input type="hidden" id="categoryId" value="{{ category.id if category else '' }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label">Category Name</label>
+                                <input type="text" class="form-control" id="categoryName" 
+                                       value="{{ category.name if category else '' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="categoryColor" class="form-label">Category Color</label>
+                                <input type="color" class="form-control" id="categoryColor" 
+                                       value="{{ category.color if category else '#808080' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Events Setup -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Events</h4>
+                <button class="btn btn-primary" id="addEventBtn">
+                    <i class="fas fa-plus"></i> Add Event
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="eventsList">
+                    <!-- Events will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="text-end">
+            <button class="btn btn-secondary me-2" onclick="window.location.href='/'">Cancel</button>
+            <button class="btn btn-primary" id="saveCategoryBtn">Save Category</button>
+        </div>
+    </div>
+
+    <!-- Event Template (Hidden) -->
+    <template id="eventTemplate">
+        <div class="event-setup-card mb-3 card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-5">
+                        <label class="form-label">Event Name</label>
+                        <input type="text" class="form-control event-name" required>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">Event Color</label>
+                        <input type="color" class="form-control event-color" required>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-danger w-100 delete-event">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Fields Section -->
+                <div class="custom-fields-section">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">Custom Fields</h6>
+                        <button class="btn btn-sm btn-outline-primary add-field">
+                            <i class="fas fa-plus"></i> Add Field
+                        </button>
+                    </div>
+                    <div class="custom-fields-list">
+                        <!-- Custom fields will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Custom Field Template (Hidden) -->
+    <template id="customFieldTemplate">
+        <div class="custom-field-item card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Field Name</label>
+                        <input type="text" class="form-control field-name" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Field Type</label>
+                        <select class="form-select field-type">
+                            <option value="text">Text</option>
+                            <option value="select">Select (Options)</option>
+                            <option value="number">Number</option>
+                            <option value="checkbox">Checkbox</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 field-options" style="display: none;">
+                        <label class="form-label">Options (one per line)</label>
+                        <textarea class="form-control field-options-input" rows="2"></textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Required</label>
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input field-required">
+                            <label class="form-check-label">Required</label>
+                        </div>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button class="btn btn-sm btn-danger delete-field">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add this right before your scripts -->
+    <script type="application/json" id="category-data">
+        {{ category|tojson|safe if category else 'null' }}
+    </script>
+    <script>
+        window.CATEGORY_DATA = JSON.parse(document.getElementById('category-data').textContent);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/category_setup.js') }}"></script>
+</body>
+</html> 

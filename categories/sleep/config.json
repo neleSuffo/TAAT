@@ -1,0 +1,16 @@
+{
+    "name": "sleep",
+    "events": [
+        {
+            "name": "ss",
+            "fields": [
+                {
+                    "name": "hh",
+                    "type": "text",
+                    "required": false
+                }
+            ]
+        }
+    ],
+    "id": "sleep"
+}

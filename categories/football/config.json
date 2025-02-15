@@ -1,0 +1,43 @@
+{
+    "id": "football",
+    "name": "football",
+    "color": "#b49d9f",
+    "events": [
+        {
+            "color": "#b49d9f",
+            "customFields": [],
+            "id": "foul",
+            "name": "foul"
+        },
+        {
+            "color": "#3d3434",
+            "customFields": [],
+            "id": "offside",
+            "name": "offside"
+        },
+        {
+            "color": "#b49d9f",
+            "customFields": [],
+            "id": "handes",
+            "name": "handes"
+        },
+        {
+            "color": "#b49d9f",
+            "customFields": [],
+            "id": "play",
+            "name": "play"
+        },
+        {
+            "id": "penalty",
+            "name": "penalty",
+            "color": "#b49d9f",
+            "customFields": []
+        },
+        {
+            "id": "no",
+            "name": "no",
+            "color": "#b49d9f",
+            "customFields": []
+        }
+    ]
+}

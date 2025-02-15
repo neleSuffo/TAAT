@@ -1,0 +1,196 @@
+{
+    "version": "1.1",
+    "date": "2024.11.05",
+    "videos": [
+        {
+            "annotations": [
+                {
+                    "gameTime": "1 - 00:00.000",
+                    "label": "Kick-off",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 0
+                },
+                {
+                    "gameTime": "1 - 00:04.480",
+                    "label": "Penalty",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 4
+                },
+                {
+                    "gameTime": "1 - 00:06.000",
+                    "label": "Goal",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 6
+                },
+                {
+                    "gameTime": "1 - 00:25.120",
+                    "label": "Foul",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 25
+                },
+                {
+                    "gameTime": "1 - 00:33.200",
+                    "label": "Goal",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 33
+                },
+                {
+                    "gameTime": "1 - 00:46.080",
+                    "label": "Corner",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 46
+                },
+                {
+                    "gameTime": "1 - 01:05.840",
+                    "label": "Shots on target",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 65
+                },
+                {
+                    "gameTime": "1 - 01:24.160",
+                    "label": "Shots on target",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 84
+                },
+                {
+                    "gameTime": "1 - 03:56.000",
+                    "label": "Shots off target",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 236
+                },
+                {
+                    "gameTime": "1 - 04:42.480",
+                    "label": "Foul",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 282
+                },
+                {
+                    "gameTime": "1 - 04:45.280",
+                    "label": "Penalty",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 285
+                },
+                {
+                    "gameTime": "1 - 04:49.920",
+                    "label": "Foul",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 289
+                },
+                {
+                    "gameTime": "1 - 04:52.880",
+                    "label": "Goal",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 292
+                },
+                {
+                    "gameTime": "1 - 05:04.160",
+                    "label": "Foul",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 304
+                },
+                {
+                    "gameTime": "1 - 05:13.680",
+                    "label": "Penalty",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 313
+                },
+                {
+                    "gameTime": "1 - 05:17.600",
+                    "label": "Goal",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 317
+                },
+                {
+                    "gameTime": "1 - 05:56.000",
+                    "label": "Goal",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 356
+                },
+                {
+                    "gameTime": "1 - 08:01.840",
+                    "label": "Indirect free-kick",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 481
+                },
+                {
+                    "gameTime": "1 - 08:07.440",
+                    "label": "Foul",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 487
+                },
+                {
+                    "gameTime": "1 - 08:09.840",
+                    "label": "Indirect free-kick",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 489
+                },
+                {
+                    "gameTime": "1 - 11:41.600",
+                    "label": "Shots off target",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 701
+                },
+                {
+                    "gameTime": "1 - 14:46.720",
+                    "label": "Corner",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 886
+                },
+                {
+                    "gameTime": "1 - 19:49.920",
+                    "label": "Yellow card",
+                    "position": 0,
+                    "team": "not applicable",
+                    "visibility": "not applicable",
+                    "seconds": 1189
+                }
+            ],
+            "path": "uploads/fullmatch.mp4",
+            "input_type": "video"
+        }
+    ]
+}

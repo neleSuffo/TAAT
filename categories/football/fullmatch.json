@@ -1,0 +1,29 @@
+{
+    "video_name": "fullmatch.mp4",
+    "category_id": "football",
+    "annotations": [
+        {
+            "categoryId": "football",
+            "eventId": "foul",
+            "time": 0
+        },
+        {
+            "categoryId": "football",
+            "eventId": "foul",
+            "time": 13.98982
+        },
+        {
+            "time": 2361.248588,
+            "categoryId": "football",
+            "eventId": "no",
+            "fields": {
+                "type": "yes"
+            }
+        },
+        {
+            "categoryId": "football",
+            "eventId": "offside",
+            "time": 3285
+        }
+    ]
+}

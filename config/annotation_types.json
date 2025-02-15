@@ -1,0 +1,148 @@
+{
+    "annotation_categories": [
+        {
+            "color": "#FF5733",
+            "description": "Actions performed by humans",
+            "events": [
+                {
+                    "color": "#FF7755",
+                    "description": "Person walking",
+                    "id": "walking",
+                    "name": "Walking"
+                },
+                {
+                    "color": "#FF9977",
+                    "description": "Person running",
+                    "id": "running",
+                    "name": "Running"
+                },
+                {
+                    "color": "#ff5733",
+                    "description": "boxing event",
+                    "id": "boxing",
+                    "name": "boxing"
+                }
+            ],
+            "id": "human_actions",
+            "name": "Human Actions"
+        },
+        {
+            "color": "#33FF57",
+            "description": "Events related to vehicles",
+            "events": [
+                {
+                    "color": "#55FF77",
+                    "description": "Car passes through frame",
+                    "id": "car_passing",
+                    "name": "Car Passing"
+                }
+            ],
+            "id": "vehicle_events",
+            "name": "Vehicle Events"
+        },
+        {
+            "id": "football",
+            "name": "football",
+            "color": "#b49d9f",
+            "events": [
+                {
+                    "id": "foul",
+                    "name": "foul",
+                    "color": "#b49d9f",
+                    "customFields": []
+                },
+                {
+                    "id": "offside",
+                    "name": "offside",
+                    "color": "#3d3434",
+                    "customFields": []
+                },
+                {
+                    "id": "handes",
+                    "name": "handes",
+                    "color": "#b49d9f",
+                    "customFields": []
+                },
+                {
+                    "id": "play",
+                    "name": "play",
+                    "color": "#b49d9f",
+                    "customFields": []
+                },
+                {
+                    "id": "penalty",
+                    "name": "penalty",
+                    "color": "#b49d9f",
+                    "customFields": []
+                },
+                {
+                    "id": "no",
+                    "name": "no",
+                    "color": "#b49d9f",
+                    "customFields": [
+                        {
+                            "name": "type",
+                            "type": "select",
+                            "required": false,
+                            "options": [
+                                "yes",
+                                "no"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "color": "#b3c5fb",
+            "description": "",
+            "events": [],
+            "id": "animals",
+            "name": "animals"
+        },
+        {
+            "color": "#000000",
+            "events": [
+                {
+                    "color": "#000000",
+                    "customFields": [
+                        {
+                            "name": "gender",
+                            "options": [
+                                "male",
+                                "woman"
+                            ],
+                            "required": false,
+                            "type": "select"
+                        },
+                        {
+                            "name": "quality",
+                            "options": [
+                                "high",
+                                "low"
+                            ],
+                            "required": false,
+                            "type": "select"
+                        }
+                    ],
+                    "id": "sleep",
+                    "name": "sleep"
+                },
+                {
+                    "color": "#000000",
+                    "customFields": [],
+                    "id": "naming",
+                    "name": "naming"
+                },
+                {
+                    "color": "#000000",
+                    "description": "kkkk event",
+                    "id": "kkkk",
+                    "name": "kkkk"
+                }
+            ],
+            "id": "kora",
+            "name": "kora"
+        }
+    ]
+}

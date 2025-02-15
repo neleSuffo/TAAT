@@ -1,0 +1,859 @@
+{
+    "annotations": [
+        {
+            "gameTime": "1 - 02:41.360",
+            "label": "Goal",
+            "position": 0,
+            "seconds": 161.36,
+            "team": "not_applicable",
+            "visibility": "hidden"
+        },
+        {
+            "gameTime": "1 - 03:48.160",
+            "label": "Shot",
+            "position": "2000",
+            "seconds": 228.16,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 03:56.000",
+            "label": "Shot",
+            "position": "3000",
+            "seconds": 236,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 03:56.000",
+            "label": "Shot",
+            "position": "4000",
+            "seconds": 236,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 04:45.280",
+            "label": "Foul",
+            "position": "7000",
+            "seconds": 285.28,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 04:57.600",
+            "label": "Challenge",
+            "position": "8000",
+            "seconds": 297.6,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 05:17.600",
+            "label": "Goal",
+            "position": "9000",
+            "seconds": 317.6,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 06:31.200",
+            "label": "Goal",
+            "position": "10000",
+            "seconds": 391.2,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 07:58.880",
+            "label": "Free kick",
+            "position": "11000",
+            "seconds": 478.88,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 08:07.440",
+            "label": "Challenge",
+            "position": "12000",
+            "seconds": 487.44,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 09:24.320",
+            "label": "Foul",
+            "position": "13000",
+            "seconds": 564.32,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 10:03.680",
+            "label": "Goal",
+            "position": "14000",
+            "seconds": 603.68,
+            "team": "home",
+            "visibility": "visible"
+        },
+        {
+            "seconds": 692,
+            "label": "Shot",
+            "team": "away",
+            "visibility": "visible",
+            "gameTime": "1 - 11:32.000"
+        },
+        {
+            "gameTime": "1 - 11:36.160",
+            "label": "Penalty",
+            "position": "15000",
+            "seconds": 696.16,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 11:36.160",
+            "label": "Shot",
+            "position": "17000",
+            "seconds": 696.16,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 11:55.120",
+            "label": "Goal",
+            "position": "18000",
+            "seconds": 715.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 12:06.480",
+            "label": "Substitute",
+            "position": "19000",
+            "seconds": 726.48,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 12:31.360",
+            "label": "Penalty",
+            "position": "20000",
+            "seconds": 751.36,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 12:38.560",
+            "label": "Penalty",
+            "position": "21000",
+            "seconds": 758.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 12:38.560",
+            "label": "Foul",
+            "position": "22000",
+            "seconds": 758.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 12:44.480",
+            "label": "Goal",
+            "position": "23000",
+            "seconds": 764.48,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 13:22.360",
+            "label": "Kickoff",
+            "position": 0,
+            "seconds": 802.36,
+            "team": "not_applicable",
+            "visibility": "not_applicable"
+        },
+        {
+            "gameTime": "1 - 13:26.400",
+            "label": "Free kick",
+            "position": "24000",
+            "seconds": 806.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 13:56.240",
+            "label": "Goal",
+            "position": "25000",
+            "seconds": 836.24,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 14:40.560",
+            "label": "Corner",
+            "position": "26000",
+            "seconds": 880.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 14:46.720",
+            "label": "Corner",
+            "position": "27000",
+            "seconds": 886.72,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 15:52.400",
+            "label": "Penalty",
+            "position": "28000",
+            "seconds": 952.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 17:11.920",
+            "label": "Goal",
+            "position": "29000",
+            "seconds": 1031.92,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 18:36.960",
+            "label": "Offside",
+            "position": "30000",
+            "seconds": 1116.96,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 19:41.120",
+            "label": "Caution",
+            "position": "31000",
+            "seconds": 1181.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 20:01.120",
+            "label": "Goal",
+            "position": "32000",
+            "seconds": 1201.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 20:13.120",
+            "label": "Free kick",
+            "position": "33000",
+            "seconds": 1213.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 20:49.120",
+            "label": "Foul",
+            "position": "34000",
+            "seconds": 1249.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 23:17.120",
+            "label": "Shot",
+            "position": "35000",
+            "seconds": 1397.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 23:17.120",
+            "label": "Shot",
+            "position": "36000",
+            "seconds": 1397.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 23:27.120",
+            "label": "Corner",
+            "position": "37000",
+            "seconds": 1407.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 24:44.440",
+            "label": "Goal",
+            "position": "38000",
+            "seconds": 1484.44,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 25:29.320",
+            "label": "Scores",
+            "position": "39000",
+            "seconds": 1529.32,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 25:29.320",
+            "label": "Shot",
+            "position": "40000",
+            "seconds": 1529.32,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 25:29.320",
+            "label": "Shot",
+            "position": "41000",
+            "seconds": 1529.32,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 25:37.240",
+            "label": "Goal",
+            "position": "42000",
+            "seconds": 1537.24,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 25:48.480",
+            "label": "Foul",
+            "position": "43000",
+            "seconds": 1548.48,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 26:02.560",
+            "label": "Foul",
+            "position": "44000",
+            "seconds": 1562.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 26:16.160",
+            "label": "Goal",
+            "position": "45000",
+            "seconds": 1576.16,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 27:53.680",
+            "label": "Save",
+            "position": "46000",
+            "seconds": 1673.68,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 28:02.240",
+            "label": "Goal",
+            "position": "47000",
+            "seconds": 1682.24,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 28:02.240",
+            "label": "Offside",
+            "position": "48000",
+            "seconds": 1682.24,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 28:02.240",
+            "label": "Shot",
+            "position": "49000",
+            "seconds": 1682.24,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 28:02.240",
+            "label": "Shot",
+            "position": "50000",
+            "seconds": 1682.24,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 28:22.600",
+            "label": "Penalty",
+            "position": "51000",
+            "seconds": 1702.6,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 29:29.640",
+            "label": "Challenge",
+            "position": "52000",
+            "seconds": 1769.64,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 29:29.640",
+            "label": "Caution",
+            "position": "53000",
+            "seconds": 1769.64,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 29:49.640",
+            "label": "Free kick",
+            "position": "54000",
+            "seconds": 1789.64,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 30:13.080",
+            "label": "Corner",
+            "position": "55000",
+            "seconds": 1813.08,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 30:25.080",
+            "label": "Penalty",
+            "position": "56000",
+            "seconds": 1825.08,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 30:47.640",
+            "label": "Offside",
+            "position": "57000",
+            "seconds": 1847.64,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 32:12.360",
+            "label": "Offside",
+            "position": "58000",
+            "seconds": 1932.36,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 32:36.280",
+            "label": "Shot on target",
+            "position": "59000",
+            "seconds": 1956.28,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 32:36.280",
+            "label": "Shot",
+            "position": "60000",
+            "seconds": 1956.28,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 35:11.280",
+            "label": "Out of play",
+            "position": "61000",
+            "seconds": 2111.28,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 36:08.720",
+            "label": "Offside",
+            "position": "62000",
+            "seconds": 2168.72,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 37:00.760",
+            "label": "Goal",
+            "position": "63000",
+            "seconds": 2220.76,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 37:37.320",
+            "label": "Shot",
+            "position": "64000",
+            "seconds": 2257.32,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 37:37.320",
+            "label": "Shot",
+            "position": "65000",
+            "seconds": 2257.32,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 40:07.640",
+            "label": "Corner",
+            "position": "66000",
+            "seconds": 2407.64,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 40:37.640",
+            "label": "Penalty",
+            "position": "67000",
+            "seconds": 2437.64,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 43:24.920",
+            "label": "Challenge",
+            "position": "68000",
+            "seconds": 2604.92,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 43:39.800",
+            "label": "Challenge",
+            "position": "69000",
+            "seconds": 2619.8,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 43:39.800",
+            "label": "Yellow card",
+            "position": "70000",
+            "seconds": 2619.8,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 44:08.440",
+            "label": "Goal",
+            "position": "71000",
+            "seconds": 2648.44,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 44:08.440",
+            "label": "Shot",
+            "position": "72000",
+            "seconds": 2648.44,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 44:08.440",
+            "label": "Shot",
+            "position": "73000",
+            "seconds": 2648.44,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 44:53.880",
+            "label": "Clearance",
+            "position": "74000",
+            "seconds": 2693.88,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 45:02.360",
+            "label": "Substitute",
+            "position": null,
+            "seconds": 2702.36,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 46:08.560",
+            "label": "Shot",
+            "position": "76000",
+            "seconds": 2768.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 46:08.560",
+            "label": "Shot",
+            "position": "77000",
+            "seconds": 2768.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 46:19.560",
+            "label": "Goal",
+            "position": "78000",
+            "seconds": 2779.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 46:42.840",
+            "label": "Shot",
+            "position": "79000",
+            "seconds": 2802.84,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 46:42.840",
+            "label": "Shot",
+            "position": "80000",
+            "seconds": 2802.84,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 47:10.040",
+            "label": "Goal",
+            "position": "81000",
+            "seconds": 2830.04,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 47:33.680",
+            "label": "Goal",
+            "position": "82000",
+            "seconds": 2853.68,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 48:11.480",
+            "label": "Corner",
+            "position": "83000",
+            "seconds": 2891.48,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 48:19.280",
+            "label": "Corner",
+            "position": "84000",
+            "seconds": 2899.28,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 48:33.960",
+            "label": "Penalty",
+            "position": "85000",
+            "seconds": 2913.96,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 48:39.560",
+            "label": "Goal",
+            "position": "86000",
+            "seconds": 2919.56,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 49:25.120",
+            "label": "Goal",
+            "position": "87000",
+            "seconds": 2965.12,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 49:38.080",
+            "label": "Penalty",
+            "position": "88000",
+            "seconds": 2978.08,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 49:38.080",
+            "label": "Goal",
+            "position": "89000",
+            "seconds": 2978.08,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 49:44.200",
+            "label": "Goal",
+            "position": "90000",
+            "seconds": 2984.2,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 49:55.160",
+            "label": "Goal",
+            "position": "91000",
+            "seconds": 2995.16,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 50:57.160",
+            "label": "Goal",
+            "position": "92000",
+            "seconds": 3057.16,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 51:04.440",
+            "label": "Offside",
+            "position": "93000",
+            "seconds": 3064.44,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 53:09.880",
+            "label": "Shot",
+            "position": "94000",
+            "seconds": 3189.88,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 53:09.880",
+            "label": "Shot",
+            "position": "95000",
+            "seconds": 3189.88,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 57:16.360",
+            "label": "Foul",
+            "position": "96000",
+            "seconds": 3436.36,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 57:30.200",
+            "label": "Penalty",
+            "position": "97000",
+            "seconds": 3450.2,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 57:43.400",
+            "label": "Shot",
+            "position": "98000",
+            "seconds": 3463.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 57:43.400",
+            "label": "Shot",
+            "position": "99000",
+            "seconds": 3463.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 57:55.040",
+            "label": "Goal",
+            "position": "100000",
+            "seconds": 3475.04,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 58:19.400",
+            "label": "Goal",
+            "position": "101000",
+            "seconds": 3499.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 58:19.400",
+            "label": "Free kick",
+            "position": "102000",
+            "seconds": 3499.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 58:47.400",
+            "label": "Goal",
+            "position": "103000",
+            "seconds": 3527.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 58:47.400",
+            "label": "Foul",
+            "position": "104000",
+            "seconds": 3527.4,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 58:53.600",
+            "label": "Goal",
+            "position": "105000",
+            "seconds": 3533.6,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 59:08.640",
+            "label": "Goal",
+            "position": "106000",
+            "seconds": 3548.64,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 59:25.880",
+            "label": "Goal",
+            "position": "107000",
+            "seconds": 3565.88,
+            "team": "away",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "2 - 60:01.350",
+            "label": "Save",
+            "position": 0,
+            "seconds": 3601.35,
+            "team": "not_applicable",
+            "visibility": "not_applicable"
+        }
+    ]
+}

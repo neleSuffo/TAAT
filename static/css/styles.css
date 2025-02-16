@@ -89,7 +89,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 10500; /* Higher than other elements, including full-screen video */
+    z-index: 9999 !important; /* Higher than video.js fullscreen */
     pointer-events: auto;
 }
 
@@ -543,15 +543,19 @@ body {
 
 .vjs-marker {
     position: absolute;
-    background: currentColor;
-    width: 5px;
+    width: 3px;
     height: 100%;
     opacity: 0.8;
-    transition: opacity 0.2s ease;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+    z-index: 100;
+    cursor: pointer;
 }
 
 .vjs-marker:hover {
     opacity: 1;
+    width: 5px;
+    transform: scaleY(1.2);
 }
 
 .vjs-tip {
@@ -722,4 +726,21 @@ body {
 
 .collapse-categories i.fa-chevron-down {
     transform: rotate(180deg);
+}
+
+/* Video.js fullscreen has z-index: 9999, so we need to go higher */
+.video-js.vjs-fullscreen {
+    z-index: 9997;
+}
+
+/* Make sure modal content is visible */
+.modal-content {
+    background: white;
+    position: relative;
+    z-index: 10000 !important;
+}
+
+/* Ensure tooltips also show above fullscreen */
+.tooltip {
+    z-index: 10001 !important;
 }

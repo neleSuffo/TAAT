@@ -28,15 +28,31 @@
             "name": "play"
         },
         {
-            "id": "penalty",
-            "name": "penalty",
             "color": "#b49d9f",
-            "customFields": []
+            "customFields": [],
+            "id": "penalty",
+            "name": "penalty"
         },
         {
-            "id": "no",
-            "name": "no",
             "color": "#b49d9f",
+            "customFields": [
+                {
+                    "name": "type",
+                    "options": [
+                        "yes",
+                        "no"
+                    ],
+                    "required": false,
+                    "type": "select"
+                }
+            ],
+            "id": "no",
+            "name": "no"
+        },
+        {
+            "id": "pass",
+            "name": "pass",
+            "color": "#ff0015",
             "customFields": []
         }
     ]

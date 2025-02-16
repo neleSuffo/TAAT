@@ -98,9 +98,19 @@
                                         <span class="text-muted">Selected Event: </span>
                                         <span id="selectedEventDisplay">None</span>
                                     </div>
-                                    <button id="addAnnotationBtn" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i> Add Annotation
-                                    </button>
+                                    <div class="d-flex align-items-center">
+                                        <div class="shortcuts-info me-2">
+                                            <button class="btn btn-sm btn-outline-secondary" 
+                                                    data-bs-toggle="tooltip" 
+                                                    data-bs-placement="left"
+                                                    title="Shortcuts: Enter = Add Annotation, Space = Play/Pause, ← → = Seek 10s">
+                                                <i class="fas fa-keyboard"></i>
+                                            </button>
+                                        </div>
+                                        <button id="addAnnotationBtn" class="btn btn-primary">
+                                            <i class="fas fa-plus"></i> Add Annotation
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="current-time-info text-center">
                                     <span class="badge bg-secondary">Current Time: <span id="annotationTimeDisplay">00:00</span></span>
@@ -136,7 +146,14 @@
 
                 <div class="card shadow-sm">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">Annotations</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Annotations</h5>
+                            <div class="d-flex align-items-center gap-2">
+                                <select class="form-select form-select-sm" id="annotationFilter" style="width: auto;">
+                                    <option value="all">All Events</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div id="annotationsList" class="annotations-list">

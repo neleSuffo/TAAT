@@ -77,27 +77,60 @@ $(document).ready(function () {
                     };
 
                     AnnotationManager.saveAnnotations();
+                    // Update markers after editing annotation
+                    updateVideoMarkers();
+                    
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnotationModal'));
                     modal.hide();
                     showToast('Annotation updated successfully', 'success');
                 }
             });
+
+            // Add filter change handler
+            $(document).on('change', '#annotationFilter', (e) => {
+                console.log('Filter changed:', e.target.value);
+                this.updateAnnotationsList();
+            });
         },
         
         updateAnnotationsList() {
-            console.log('Updating annotations list:', this.annotations);
+            console.log('Starting updateAnnotationsList');
+            console.log('Current annotations:', this.annotations);
+            
             const annotationsList = $('#annotationsList');
             annotationsList.empty();
 
             if (!this.annotations || this.annotations.length === 0) {
+                console.log('No annotations available');
                 annotationsList.html('<p class="text-muted text-center">No annotations yet</p>');
                 return;
             }
 
-            // Sort annotations by time
-            const sortedAnnotations = [...this.annotations].sort((a, b) => a.time - b.time);
+            // Get selected filter
+            const selectedFilter = $('#annotationFilter').val();
+            console.log('Selected filter value:', selectedFilter);
 
-            sortedAnnotations.forEach((annotation, index) => {
+            // Filter and sort annotations
+            let filteredAnnotations = [...this.annotations].sort((a, b) => a.time - b.time);
+            console.log('Sorted annotations:', filteredAnnotations);
+            
+            if (selectedFilter && selectedFilter !== 'all') {
+                filteredAnnotations = filteredAnnotations.filter(annotation => {
+                    const matches = annotation.eventId === selectedFilter;
+                    console.log(`Checking annotation eventId: ${annotation.eventId} against filter: ${selectedFilter}, matches: ${matches}`);
+                    return matches;
+                });
+                console.log('Filtered annotations:', filteredAnnotations);
+            }
+
+            if (filteredAnnotations.length === 0) {
+                console.log('No annotations match the filter');
+                annotationsList.html('<p class="text-muted text-center">No annotations match the selected filter</p>');
+                return;
+            }
+
+            console.log('Rendering filtered annotations:', filteredAnnotations);
+            filteredAnnotations.forEach((annotation, index) => {
                 const category = CategoryManager.categories.find(c => c.id === annotation.categoryId);
                 const event = category?.events.find(e => e.id === annotation.eventId);
                 
@@ -151,6 +184,8 @@ $(document).ready(function () {
                     if (confirm('Are you sure you want to delete this annotation?')) {
                         this.annotations.splice(index, 1);
                         this.saveAnnotations();
+                        // Update markers after deleting annotation
+                        updateVideoMarkers();
                     }
                 });
 
@@ -245,10 +280,12 @@ $(document).ready(function () {
             this.annotations.push(annotation);
             this.saveAnnotations();
             
+            // Update markers after adding new annotation
+            updateVideoMarkers();
+            
             const modal = bootstrap.Modal.getInstance(document.getElementById('annotationModal'));
             if (modal) {
                 modal.hide();
-                // The hidden.bs.modal event will handle cleanup
             }
             
             showToast('Annotation added successfully', 'success');
@@ -374,6 +411,24 @@ $(document).ready(function () {
                 } else {
                     $('#eventFields').empty();
                 }
+            });
+
+            // Also update the filter dropdown
+            const filterSelect = $('#annotationFilter');
+            filterSelect.empty();
+            filterSelect.append('<option value="all">All Events</option>');
+            
+            if (selectedCategory && selectedCategory.events.length > 0) {
+                selectedCategory.events.forEach(event => {
+                    filterSelect.append(`
+                        <option value="${event.id}">${event.name}</option>
+                    `);
+                });
+            }
+
+            // Add change handler for filter
+            filterSelect.off('change').on('change', () => {
+                this.updateAnnotationsList();
             });
         },
 
@@ -532,6 +587,8 @@ $(document).ready(function () {
                 const categoryId = eventItem.closest('.category-item').data('category-id');
                 const eventId = eventItem.data('event-id');
                 
+                console.log('Selected event:', { categoryId, eventId });
+                
                 selectedCategoryId = categoryId;
                 selectedEventId = eventId;
                 
@@ -539,9 +596,35 @@ $(document).ready(function () {
                 const event = category?.events.find(e => e.id === eventId);
                 
                 if (event) {
+                    console.log('Found event:', event);
                     selectedEventName = event.name;
                     $('#selectedEventDisplay').text(`${category.name} - ${event.name}`);
                     $('#addAnnotationBtn').prop('disabled', false);
+                    
+                    // Update filter dropdown and select the current event
+                    const filterSelect = $('#annotationFilter');
+                    console.log('Current filter value before update:', filterSelect.val());
+                    
+                    filterSelect.empty();
+                    filterSelect.append('<option value="all">All Events</option>');
+                    
+                    if (category.events.length > 0) {
+                        category.events.forEach(evt => {
+                            const isSelected = evt.id === eventId;
+                            console.log(`Adding event option: ${evt.name}, id: ${evt.id}, selected: ${isSelected}`);
+                            filterSelect.append(`
+                                <option value="${evt.id}" ${isSelected ? 'selected' : ''}>
+                                    ${evt.name}
+                                </option>
+                            `);
+                        });
+                    }
+                    
+                    // Set the value and trigger change explicitly
+                    console.log('Setting filter to:', eventId);
+                    filterSelect.val(eventId);
+                    console.log('Filter value after set:', filterSelect.val());
+                    filterSelect.trigger('change');
                     
                     // Update annotation event dropdown if it exists
                     if (typeof AnnotationManager !== 'undefined' && AnnotationManager.updateAnnotationEventDropdown) {
@@ -779,6 +862,20 @@ $(document).ready(function () {
                     
                     // Update selected category
                     selectedCategoryId = $categoryItem.data('category-id');
+                    
+                    // Update filter dropdown with the selected category's events
+                    const category = CategoryManager.categories.find(c => c.id === selectedCategoryId);
+                    const filterSelect = $('#annotationFilter');
+                    filterSelect.empty();
+                    filterSelect.append('<option value="all">All Events</option>');
+                    
+                    if (category && category.events.length > 0) {
+                        category.events.forEach(event => {
+                            filterSelect.append(`
+                                <option value="${event.id}">${event.name}</option>
+                            `);
+                        });
+                    }
                     
                     // Toggle events list
                     $('.events-list').not(eventsList).slideUp(200);
@@ -1118,20 +1215,14 @@ $(document).ready(function () {
                 src: videoUrl
             });
 
-            // Wait for video metadata to load
+            // Enable markers
             player.on('loadedmetadata', function() {
-                // Initialize markers plugin
-                player.markers({
-                    markers: []
-                });
-                
-                // Update markers if there are any annotations
-                if (annotations.length > 0) {
-                    updateVideoMarkers();
-                }
+                console.log('Video metadata loaded, initializing markers');
+                updateVideoMarkers();
             });
 
             setupCustomControls();
+            setupKeyboardShortcuts();
         });
 
         return player;
@@ -1212,9 +1303,35 @@ $(document).ready(function () {
     }
 
     function updateVideoMarkers() {
-        // Remove or comment out all marker-related code
-        // const markers = [];
-        // function updateVideoMarkers() { ... }
+        if (!player || !AnnotationManager.annotations.length) {
+            console.log('No player or annotations available for markers');
+            return;
+        }
+
+        console.log('Updating video markers');
+        const duration = player.duration();
+        const progressControl = player.controlBar.progressControl.seekBar.el();
+        
+        // Clear existing markers
+        $('.vjs-marker').remove();
+
+        // Add markers for each annotation
+        AnnotationManager.annotations.forEach(annotation => {
+            const category = CategoryManager.categories.find(c => c.id === annotation.categoryId);
+            const event = category?.events.find(e => e.id === annotation.eventId);
+            
+            if (event) {
+                console.log(`Adding marker for event: ${event.name} with color: ${event.color}`);
+                const position = (annotation.time / duration) * 100;
+                const marker = $(`
+                    <div class="vjs-marker" 
+                         style="left: ${position}%; background-color: ${event.color}"
+                         title="${category.name} - ${event.name}: ${formatTime(annotation.time)}"
+                    ></div>
+                `);
+                $(progressControl).append(marker);
+            }
+        });
     }
 
     function findEventById(eventId) {
@@ -1263,4 +1380,54 @@ $(document).ready(function () {
             }
         });
     }
+
+    // Add this to handle keyboard shortcuts
+    function setupKeyboardShortcuts() {
+        $(document).on('keydown', function(e) {
+            // Only handle shortcuts if video is loaded
+            if (!player) return;
+
+            // Don't trigger shortcuts if user is typing in an input
+            if ($(e.target).is('input, textarea')) return;
+
+            console.log('Key pressed:', e.key);
+
+            switch(e.key) {
+                case 'Enter':
+                    // Add annotation
+                    e.preventDefault();
+                    if (!$('#annotationModal').is(':visible')) {  // Only if modal is not already open
+                        AnnotationManager.showAddAnnotationModal();
+                    }
+                    break;
+
+                case 'ArrowLeft':
+                    // Seek backward 10 seconds
+                    e.preventDefault();
+                    const currentTime = player.currentTime();
+                    player.currentTime(Math.max(0, currentTime - 10));
+                    break;
+
+                case 'ArrowRight':
+                    // Seek forward 10 seconds
+                    e.preventDefault();
+                    const newTime = player.currentTime() + 10;
+                    player.currentTime(Math.min(player.duration(), newTime));
+                    break;
+
+                case ' ':
+                    // Space bar to play/pause
+                    e.preventDefault();
+                    if (player.paused()) {
+                        player.play();
+                    } else {
+                        player.pause();
+                    }
+                    break;
+            }
+        });
+    }
+
+    // Initialize tooltips
+    $('[data-bs-toggle="tooltip"]').tooltip();
 });

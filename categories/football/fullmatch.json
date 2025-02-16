@@ -5,31 +5,22 @@
         {
             "categoryId": "football",
             "eventId": "foul",
+            "fields": {},
             "time": 0
         },
         {
             "categoryId": "football",
-            "eventId": "foul",
-            "time": 13.98982
+            "eventId": "play",
+            "fields": {},
+            "time": 165.466297
         },
         {
+            "time": 4463,
             "categoryId": "football",
             "eventId": "no",
             "fields": {
-                "type": "yes"
-            },
-            "time": 2361.248588
-        },
-        {
-            "categoryId": "football",
-            "eventId": "offside",
-            "time": 3285
-        },
-        {
-            "time": 4641.36937,
-            "categoryId": "football",
-            "eventId": "pass",
-            "fields": {}
+                "team": "away"
+            }
         }
     ]
 }

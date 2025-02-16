@@ -38,6 +38,19 @@ class CategorySetup {
         $(document).on('click', '.delete-field', (e) => {
             $(e.target).closest('.custom-field-item').remove();
         });
+
+        // Remove invalid state when user starts typing
+        $(document).on('input', '.event-name, .field-name, .field-options-input', function() {
+            $(this).removeClass('is-invalid');
+        });
+
+        // Validate category name on input
+        $('#categoryName').on('input', function() {
+            $(this).removeClass('is-invalid');
+            if (!$(this).val().trim()) {
+                $(this).addClass('is-invalid');
+            }
+        });
     }
 
     loadExistingCategory(category) {
@@ -159,9 +172,69 @@ class CategorySetup {
     }
 
     saveCategory() {
+        // Validate category name
+        const categoryName = $('#categoryName').val().trim();
+        if (!categoryName) {
+            alert('Please enter a category name');
+            $('#categoryName').focus();
+            return;
+        }
+
+        // Validate events
+        const events = $('.event-setup-card');
+        if (events.length === 0) {
+            if (!confirm('Do you want to save this category without any events?')) {
+                return;
+            }
+        }
+
+        // Validate each event
+        let hasInvalidEvents = false;
+        events.each((_, eventCard) => {
+            const $eventCard = $(eventCard);
+            const eventName = $eventCard.find('.event-name').val().trim();
+            
+            if (!eventName) {
+                hasInvalidEvents = true;
+                $eventCard.find('.event-name').addClass('is-invalid');
+                alert('Please enter a name for all events');
+                return false; // break the loop
+            }
+
+            // Validate custom fields if any
+            const customFields = $eventCard.find('.custom-field-item');
+            customFields.each((_, fieldItem) => {
+                const $field = $(fieldItem);
+                const fieldName = $field.find('.field-name').val().trim();
+                
+                if (!fieldName) {
+                    hasInvalidEvents = true;
+                    $field.find('.field-name').addClass('is-invalid');
+                    alert('Please enter a name for all custom fields');
+                    return false;
+                }
+
+                // Validate select type fields have options
+                if ($field.find('.field-type').val() === 'select') {
+                    const options = $field.find('.field-options-input').val().trim();
+                    if (!options) {
+                        hasInvalidEvents = true;
+                        $field.find('.field-options-input').addClass('is-invalid');
+                        alert('Please add options for select type fields');
+                        return false;
+                    }
+                }
+            });
+        });
+
+        if (hasInvalidEvents) {
+            return;
+        }
+
+        // Collect and save data if validation passes
         const categoryData = {
             id: $('#categoryId').val(),
-            name: $('#categoryName').val(),
+            name: categoryName,
             color: $('#categoryColor').val(),
             events: []
         };

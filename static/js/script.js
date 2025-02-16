@@ -20,20 +20,20 @@ $(document).ready(function () {
             // Video-related event listeners
             const uploadContainer = document.getElementById('uploadContainer');
             if (uploadContainer) {
-                uploadContainer.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    uploadContainer.classList.add('drag-over');
-                });
+    uploadContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.add('drag-over');
+    });
 
-                uploadContainer.addEventListener('dragleave', () => {
-                    uploadContainer.classList.remove('drag-over');
-                });
+    uploadContainer.addEventListener('dragleave', () => {
+        uploadContainer.classList.remove('drag-over');
+    });
 
-                uploadContainer.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    uploadContainer.classList.remove('drag-over');
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0 && files[0].type.startsWith('video/')) {
+    uploadContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith('video/')) {
                         this.handleVideoUpload(files[0]);
                     }
                 });
@@ -78,7 +78,7 @@ $(document).ready(function () {
 
                     AnnotationManager.saveAnnotations();
                     // Update markers after editing annotation
-                    updateVideoMarkers();
+                        updateVideoMarkers();
                     
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnotationModal'));
                     modal.hide();
@@ -142,7 +142,8 @@ $(document).ready(function () {
                 const annotationElement = $(`
                     <div class="annotation-item mb-2 p-2 rounded cursor-pointer" 
                          style="border-left: 3px solid ${event.color}; background-color: ${event.color}10"
-                         data-time="${annotation.time}">
+                         data-time="${annotation.time}"
+                         data-annotation-index="${this.annotations.indexOf(annotation)}">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="annotation-content" style="flex-grow: 1;">
                                 <div class="fw-bold">${formatTime(annotation.time)}</div>
@@ -151,18 +152,18 @@ $(document).ready(function () {
                             </div>
                             <div class="annotation-actions">
                                 <button class="btn btn-sm btn-outline-secondary edit-annotation me-1" 
-                                        data-index="${index}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                                        data-index="${this.annotations.indexOf(annotation)}">
+                                <i class="fas fa-edit"></i>
+                            </button>
                                 <button class="btn btn-sm btn-outline-danger delete-annotation" 
-                                        data-index="${index}">
+                                        data-index="${this.annotations.indexOf(annotation)}">
                                     <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                            </button>
                         </div>
                     </div>
-                `);
-
+                </div>
+            `);
+            
                 // Add click handler for the content area
                 annotationElement.find('.annotation-content').on('click', function() {
                     const time = $(this).closest('.annotation-item').data('time');
@@ -174,18 +175,21 @@ $(document).ready(function () {
 
                 // Add edit handler
                 annotationElement.find('.edit-annotation').on('click', (e) => {
-                    e.stopPropagation();
+            e.stopPropagation();
                     this.showEditAnnotationModal(annotation, index);
                 });
 
                 // Add delete handler
                 annotationElement.find('.delete-annotation').on('click', (e) => {
                     e.stopPropagation();
+                    const actualIndex = $(e.currentTarget).data('index');
+                    console.log('Deleting annotation at index:', actualIndex);
+                    
                     if (confirm('Are you sure you want to delete this annotation?')) {
-                        this.annotations.splice(index, 1);
+                        this.annotations.splice(actualIndex, 1);
                         this.saveAnnotations();
-                        // Update markers after deleting annotation
                         updateVideoMarkers();
+                        this.updateAnnotationsList(); // Refresh the list
                     }
                 });
 
@@ -267,9 +271,9 @@ $(document).ready(function () {
             
             if (missingFields.length > 0) {
                 showToast(`Please fill in required fields: ${missingFields.join(', ')}`, 'error');
-                return;
-            }
-            
+            return;
+        }
+
             const annotation = {
                 time: currentTime,
                 categoryId: categoryId,
@@ -300,6 +304,8 @@ $(document).ready(function () {
         },
 
         showEditAnnotationModal(annotation, index) {
+            console.log('Editing annotation:', annotation);
+            
             // Set the form values
             $('#editAnnotationIndex').val(index);
             const timeMinutes = Math.floor(annotation.time / 60);
@@ -324,10 +330,130 @@ $(document).ready(function () {
                         </option>
                     `);
                 });
-            } else {
-                console.warn('Category not found or has no events');
-                editAnnotationSelect.append('<option value="" disabled>No events available</option>');
             }
+
+            // Add custom fields container if it doesn't exist
+            if (!$('#editCustomFields').length) {
+                $('.modal-body #editAnnotationForm').append('<div id="editCustomFields" class="mt-3"></div>');
+            }
+
+            // Handle custom fields
+            const updateCustomFields = () => {
+                const [categoryId, eventId] = editAnnotationSelect.val().split(':');
+                const selectedCategory = CategoryManager.categories.find(c => c.id === categoryId);
+                const selectedEvent = selectedCategory?.events.find(e => e.id === eventId);
+                
+                const customFieldsContainer = $('#editCustomFields');
+                customFieldsContainer.empty();
+
+                if (selectedEvent?.customFields?.length > 0) {
+                    selectedEvent.customFields.forEach(field => {
+                        const fieldValue = annotation.fields?.[field.name] || '';
+                        let fieldHtml = `
+                            <div class="mb-3">
+                                <label class="form-label">${field.name}${field.required ? ' *' : ''}</label>
+                        `;
+
+                        switch (field.type) {
+                            case 'text':
+                                fieldHtml += `
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="${field.name}" 
+                                           value="${fieldValue}"
+                                           ${field.required ? 'required' : ''}>
+                                `;
+                                break;
+                            case 'select':
+                                fieldHtml += `
+                                    <select class="form-select" 
+                                            name="${field.name}"
+                                            ${field.required ? 'required' : ''}>
+                                        <option value="">Select...</option>
+                                        ${field.options.map(opt => 
+                                            `<option value="${opt}" ${fieldValue === opt ? 'selected' : ''}>${opt}</option>`
+                                        ).join('')}
+                                    </select>
+                                `;
+                                break;
+                            case 'number':
+                                fieldHtml += `
+                                    <input type="number" 
+                                           class="form-control" 
+                                           name="${field.name}" 
+                                           value="${fieldValue}"
+                                           ${field.required ? 'required' : ''}>
+                                `;
+                                break;
+                            case 'checkbox':
+                                fieldHtml += `
+                                    <div class="form-check">
+                                        <input type="checkbox" 
+                                               class="form-check-input" 
+                                               name="${field.name}" 
+                                               ${fieldValue ? 'checked' : ''}
+                                               ${field.required ? 'required' : ''}>
+                                        <label class="form-check-label">${field.name}</label>
+                                    </div>
+                                `;
+                                break;
+                        }
+
+                        fieldHtml += `</div>`;
+                        customFieldsContainer.append(fieldHtml);
+                    });
+                }
+            };
+
+            // Add change handler for event selection
+            editAnnotationSelect.off('change').on('change', updateCustomFields);
+
+            // Initialize custom fields for current event
+            updateCustomFields();
+
+            // Update the save handler
+            $('#updateAnnotationBtn').off('click').on('click', () => {
+                const index = parseInt($('#editAnnotationIndex').val());
+                const minutes = parseInt($('#editAnnotationMinutes').val()) || 0;
+                const seconds = parseInt($('#editAnnotationSeconds').val()) || 0;
+                const eventValue = $('#editAnnotationEvent').val();
+
+                if (!eventValue) {
+                    showToast('Please select an event', 'error');
+                    return;
+                }
+
+                const [categoryId, eventId] = eventValue.split(':');
+                const time = minutes * 60 + seconds;
+
+                // Collect custom fields
+                const fields = {};
+                $('#editCustomFields [name]').each(function() {
+                    const field = $(this);
+                    if (field.attr('type') === 'checkbox') {
+                        fields[field.attr('name')] = field.is(':checked');
+                    } else {
+                        fields[field.attr('name')] = field.val();
+                    }
+                });
+
+                if (index >= 0 && index < this.annotations.length) {
+                    this.annotations[index] = {
+                        ...this.annotations[index],
+                        time: time,
+                        categoryId: categoryId,
+                        eventId: eventId,
+                        fields: fields
+                    };
+
+                    this.saveAnnotations();
+                    updateVideoMarkers();
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnotationModal'));
+                    modal.hide();
+                    showToast('Annotation updated successfully', 'success');
+                }
+            });
 
             // Show the modal
             const modal = new bootstrap.Modal(document.getElementById('editAnnotationModal'));
@@ -337,8 +463,8 @@ $(document).ready(function () {
         showAddAnnotationModal() {
             if (!player) {
                 showToast('Please upload a video first', 'error');
-                return;
-            }
+            return;
+        }
 
             // Pause the video
             player.pause();
@@ -497,8 +623,8 @@ $(document).ready(function () {
                 $('#categoryColor').val('#808080');
                 $('#categoryEvents').val('');
                 const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
-                modal.show();
-            });
+            modal.show();
+        });
 
             // Save category button
             $(document).on('click', '#saveCategoryBtn', () => {
@@ -703,12 +829,12 @@ $(document).ready(function () {
             const eventsText = $('#categoryEvents').val();
             
             console.log('Category data:', { name, color, eventsText });
-            
-            if (!name) {
-                showToast('Please enter a category name', 'error');
-                return;
-            }
-            
+        
+        if (!name) {
+            showToast('Please enter a category name', 'error');
+            return;
+        }
+        
             const categoryId = name.toLowerCase().replace(/\s+/g, '_');
             
             if (this.categories.some(c => c.id === categoryId)) {
@@ -743,32 +869,32 @@ $(document).ready(function () {
         },
 
         handleSaveEvent() {
-            const categoryId = $('#eventCategoryId').val();
-            const name = $('#eventName').val().trim();
-            const color = $('#eventColor').val();
+        const categoryId = $('#eventCategoryId').val();
+        const name = $('#eventName').val().trim();
+        const color = $('#eventColor').val();
+        
+        if (!name) {
+            showToast('Please enter an event name', 'error');
+            return;
+        }
+        
+            const category = this.categories.find(c => c.id === categoryId);
+        if (category) {
+            const eventId = name.toLowerCase().replace(/\s+/g, '_');
             
-            if (!name) {
-                showToast('Please enter an event name', 'error');
+                if (category.events.some(e => e.id === eventId)) {
+                showToast('An event with this name already exists', 'error');
                 return;
             }
             
-            const category = this.categories.find(c => c.id === categoryId);
-            if (category) {
-                const eventId = name.toLowerCase().replace(/\s+/g, '_');
-                
-                if (category.events.some(e => e.id === eventId)) {
-                    showToast('An event with this name already exists', 'error');
-                    return;
-                }
-                
-                const newEvent = {
-                    id: eventId,
-                    name: name,
-                    color: color,
+            const newEvent = {
+                id: eventId,
+                name: name,
+                color: color,
                     customFields: [] // Initialize empty custom fields array
-                };
-                
-                category.events.push(newEvent);
+            };
+            
+            category.events.push(newEvent);
                 
                 // Save categories and update UI
                 this.saveCategories().then(() => {
@@ -830,7 +956,7 @@ $(document).ready(function () {
                             <div class="d-flex align-items-center" style="cursor: pointer;">
                                 <i class="fas fa-chevron-right me-2 collapse-indicator"></i>
                                 <span class="category-name" style="color: ${category.color}">${category.name}</span>
-                            </div>
+                        </div>
                             <div class="category-actions">
                                 <button class="btn btn-sm btn-outline-secondary edit-category">
                                     <i class="fas fa-edit"></i>
@@ -842,11 +968,11 @@ $(document).ready(function () {
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
-                        </div>
+                            </div>
                         <div class="events-list mt-2" style="display: none;">
                             ${this.renderEvents(category.events)}
                         </div>
-                    </div>
+                        </div>
                 `);
                 
                 // Add click handler for collapse/expand and selection
@@ -978,7 +1104,7 @@ $(document).ready(function () {
         },
 
         handleEditCategory() {
-            const categoryId = $('#editCategoryId').val();
+        const categoryId = $('#editCategoryId').val();
             const name = $('#editCategoryName').val().trim();
             const color = $('#editCategoryColor').val();
 
@@ -1090,9 +1216,9 @@ $(document).ready(function () {
             </div>
         `);
 
-            $.ajax({
+        $.ajax({
                 url: '/upload',
-                type: 'POST',
+            type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
@@ -1124,9 +1250,9 @@ $(document).ready(function () {
                 uploadArea.html(originalContent);
                 showToast(xhr.responseJSON?.error || 'Error uploading video', 'error');
                 $('#videoUpload').val('');
-                }
-            });
-        }
+            }
+        });
+    }
 
     // Video player controls
     videoPlayer.addEventListener('loadedmetadata', function() {
@@ -1218,7 +1344,7 @@ $(document).ready(function () {
             // Enable markers
             player.on('loadedmetadata', function() {
                 console.log('Video metadata loaded, initializing markers');
-                updateVideoMarkers();
+                    updateVideoMarkers();
             });
 
             setupCustomControls();
@@ -1352,7 +1478,7 @@ $(document).ready(function () {
             console.error('Missing required data for saving annotations');
             return;
         }
-
+        
         const annotationData = {
             filename: videoFile.name,
             categoryId: selectedCategoryId,
@@ -1404,7 +1530,7 @@ $(document).ready(function () {
                 case 'ArrowLeft':
                     // Seek backward 10 seconds
                     e.preventDefault();
-                    const currentTime = player.currentTime();
+        const currentTime = player.currentTime();
                     player.currentTime(Math.max(0, currentTime - 10));
                     break;
 

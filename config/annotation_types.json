@@ -41,53 +41,55 @@
             "name": "Vehicle Events"
         },
         {
+            "id": "football",
+            "name": "football",
             "color": "#b49d9f",
             "events": [
                 {
-                    "color": "#b49d9f",
-                    "customFields": [],
                     "id": "foul",
-                    "name": "foul"
+                    "name": "foul",
+                    "color": "#b49d9f",
+                    "customFields": []
                 },
                 {
-                    "color": "#3d3434",
-                    "customFields": [],
                     "id": "offside",
-                    "name": "offside"
+                    "name": "offside",
+                    "color": "#3d3434",
+                    "customFields": []
                 },
                 {
-                    "color": "#b49d9f",
-                    "customFields": [],
                     "id": "handes",
-                    "name": "handes"
+                    "name": "handes",
+                    "color": "#b49d9f",
+                    "customFields": []
                 },
                 {
-                    "color": "#b49d9f",
-                    "customFields": [],
                     "id": "play",
-                    "name": "play"
-                },
-                {
+                    "name": "play",
                     "color": "#b49d9f",
-                    "customFields": [],
-                    "id": "penalty",
-                    "name": "penalty"
+                    "customFields": []
                 },
                 {
+                    "id": "penalty",
+                    "name": "penalty",
+                    "color": "#b49d9f",
+                    "customFields": []
+                },
+                {
+                    "id": "no",
+                    "name": "no",
                     "color": "#b49d9f",
                     "customFields": [
                         {
-                            "name": "type",
-                            "options": [
-                                "yes",
-                                "no"
-                            ],
+                            "name": "team",
+                            "type": "select",
                             "required": false,
-                            "type": "select"
+                            "options": [
+                                "home",
+                                "away"
+                            ]
                         }
-                    ],
-                    "id": "no",
-                    "name": "no"
+                    ]
                 },
                 {
                     "id": "pass",
@@ -95,9 +97,7 @@
                     "color": "#ff0015",
                     "customFields": []
                 }
-            ],
-            "id": "football",
-            "name": "football"
+            ]
         },
         {
             "color": "#b3c5fb",

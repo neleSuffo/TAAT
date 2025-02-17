@@ -2,6 +2,8 @@
 
 A web-based tool for temporal annotation of videos. This tool allows users to create custom categories with events and add timestamped annotations to videos.
 
+![image](image.png)
+
 ## Features
 
 - Video upload and playback
@@ -30,12 +32,22 @@ cd temporal-annotation-tool
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+3. Create the necessary directories:
+- Ensure that the following directories exist:
+  - `uploads`: Place your video files here.
+  - `annotations`: This will store the annotation files.
+  - `categories`: This will store category-specific data.
+  - `config`: This will store configuration files.
+
+4. Run the application:
 ```bash
 python app.py
 ```
 
 ## Usage
+
+### Video Upload
+- Place your video files in the `uploads` folder. The application will process these files when uploaded through the web interface.
 
 ### Category Setup
 1. Click "New Category" to create a category
@@ -57,6 +69,29 @@ python app.py
 - Edit or delete existing annotations
 - Click on timeline markers to jump to specific annotations
 
+### Annotation File Structure
+- The annotation files are stored in JSON format in the `annotations` folder. Each file corresponds to a video and contains the following structure:
+  ```json
+  {
+      "video_name": "example_video.mp4",
+      "category_id": "example_category",
+      "annotations": [
+          {
+              "time": 120,
+              "categoryId": "example_category",
+              "eventId": "example_event",
+              "fields": {
+                  "custom_field_1": "value",
+                  "custom_field_2": "value"
+              }
+          }
+      ]
+  }
+  ```
+
+### Event Types and Categories
+- Event types can be configured in the `config/annotation_types.json` file. You can add, edit, or remove event types as needed.
+
 ## Project Structure
 ```
 project/
@@ -72,5 +107,8 @@ project/
 - Frontend: HTML, CSS, JavaScript, jQuery
 - Backend: Python Flask
 - Video Player: Video.js
+
+## Troubleshooting
+- If you encounter issues, ensure that all required directories exist and that you have the necessary permissions to read/write files in those directories.
 
 

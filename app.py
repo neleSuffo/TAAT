@@ -62,6 +62,7 @@ def upload_video():
 
     try:
         # Secure the filename
+        print("here is the video file",video_file.filename)
         filename = secure_filename(video_file.filename)
         
         # Create category folder if it doesn't exist

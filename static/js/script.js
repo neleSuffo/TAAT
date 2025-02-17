@@ -1556,4 +1556,77 @@ $(document).ready(function () {
 
     // Initialize tooltips
     $('[data-bs-toggle="tooltip"]').tooltip();
+
+    function downloadFile(filename, data) {
+        const blob = new Blob([data], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Add export functionality
+    function exportAnnotations(format) {
+        const annotationsData = AnnotationManager.annotations;
+
+        if (!annotationsData.length) {
+            showToast('No annotations to export', 'error');
+            return;
+        }
+
+        let exportData;
+        let fileName;
+
+        switch (format) {
+            case 'json':
+                exportData = JSON.stringify(annotationsData, null, 2);
+                fileName = 'annotations.json';
+                break;
+            case 'csv':
+                exportData = convertToCSV(annotationsData);
+                fileName = 'annotations.csv';
+                break;
+            case 'xml':
+                exportData = convertToXML(annotationsData);
+                fileName = 'annotations.xml';
+                break;
+            default:
+                showToast('Unsupported format', 'error');
+                return;
+        }
+
+        downloadFile(fileName, exportData);
+        showToast(`File saved as ${fileName}`, 'success');
+    }
+
+    // Add event listener for export dropdown
+    $('#exportFormat').on('change', function() {
+        const selectedFormat = $(this).val();
+        if (selectedFormat) {
+            exportAnnotations(selectedFormat);
+        }
+    });
+
+    function convertToCSV(data) {
+        const header = 'Time,Category ID,Event ID\n';
+        const rows = data.map(annotation => `${annotation.time},${annotation.categoryId},${annotation.eventId}`);
+        return header + rows.join('\n');
+    }
+
+    function convertToXML(data) {
+        let xml = '<annotations>\n';
+        data.forEach(annotation => {
+            xml += `  <annotation>\n`;
+            xml += `    <time>${annotation.time}</time>\n`;
+            xml += `    <categoryId>${annotation.categoryId}</categoryId>\n`;
+            xml += `    <eventId>${annotation.eventId}</eventId>\n`;
+            xml += `  </annotation>\n`;
+        });
+        xml += '</annotations>';
+        return xml;
+    }
 });

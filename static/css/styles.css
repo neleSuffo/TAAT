@@ -358,10 +358,7 @@ body {
 }
 
 .animated-title {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.5rem;
+    /* Remove any animation styles if they exist */
 }
 
 .logo-icon {
@@ -743,4 +740,71 @@ body {
 /* Ensure tooltips also show above fullscreen */
 .tooltip {
     z-index: 10001 !important;
+}
+
+.export-controls {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.export-controls h5 {
+    margin-bottom: 0;
+    margin-right: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-select {
+    width: auto;
+    display: inline-block;
+    border-radius: 5px;
+    border: 1px solid #007bff;
+    transition: border-color 0.3s ease;
+}
+
+.form-select:hover {
+    border-color: #0056b3;
+}
+
+.form-select:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.export-controls {
+    animation: fadeIn 0.5s ease;
+}
+
+/* .navbar {
+    margin-bottom: 20px;
+}
+
+.navbar-nav .nav-item {
+    margin-left: 15px;
+    margin-top: 30px;
+} */
+
+.animated-icon {
+    margin-left: 10px; /* Space between title and icon */
+    font-size: 1.5rem; /* Adjust size as needed */
+    animation: pulse 1.5s infinite; /* Add animation */
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

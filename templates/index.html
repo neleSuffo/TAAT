@@ -12,19 +12,30 @@
 </head>
 <body class="bg-light">
     <div class="container-fluid p-4">
-        <div class="row mb-3">
-            <div class="col-12">
-                <div class="title-container">
-                    <div class="animated-title">
-                        <div class="logo-icon">
-                            <i class="fas fa-clock"></i>
-                            <i class="fas fa-tag annotation-tag"></i>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <div class="d-flex justify-content-between w-100 align-items-center">
+                        <div class="d-flex align-items-center">
+                            <h1 class="tool-title mb-0">Temporal<span class="highlight">Annotation</span></h1>
+                            <div class="animated-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
                         </div>
-                        <h1 class="tool-title">Temporal<span class="highlight">Annotation</span></h1>
+                        <div class="export-controls d-flex align-items-center">
+                            <h5 class="mb-0 me-2">Export Annotations</h5>
+                            <select id="exportFormat" class="form-select" style="width: auto;">
+                                <option value="" disabled selected>Select format</option>
+                                <option value="json">Export as JSON</option>
+                                <option value="csv">Export as CSV</option>
+                                <option value="xml">Export as XML</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </nav>
+
         <div class="row">
             <!-- Left Panel - Video and Controls -->
             <div class="col-md-8">

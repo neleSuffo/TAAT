@@ -24,7 +24,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'  # Where videos are stored
 app.config['ANNOTATIONS_FOLDER'] = 'annotations'  # Where annotation data is stored
 app.config['EVENT_TYPES_FILE'] = 'config/annotation_types.json'  # Event configuration
 app.config['CATEGORIES_FOLDER'] = 'categories'  # Category-specific data
-app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 1000 * 1024 * 1024  # 500MB max file size
 
 # Create necessary directories
 for directory in ['uploads', 'annotations', 'categories', 'config']:

@@ -31,14 +31,6 @@ cd temporal-annotation-tool
 ```bash
 pip install -r requirements.txt
 ```
-
-3. Create the necessary directories:
-- Ensure that the following directories exist:
-  - `uploads`: Place your video files here.
-  - `annotations`: This will store the annotation files.
-  - `categories`: This will store category-specific data.
-  - `config`: This will store configuration files.
-
 4. Run the application:
 ```bash
 python app.py
@@ -70,7 +62,7 @@ python app.py
 - Click on timeline markers to jump to specific annotations
 
 ### Annotation File Structure
-- The annotation files are stored in JSON format in the `annotations` folder. Each file corresponds to a video and contains the following structure:
+- The annotation files are stored in JSON format in the `Corresponding Category` folder. Each file corresponds to a video and contains the following structure:
   ```json
   {
       "video_name": "example_video.mp4",
@@ -100,8 +92,23 @@ project/
 │   └── js/
 ├── templates/
 ├── uploads/
-└── app.py
+├── app.py
+├── config/
+├── categories/
+
 ```
+### Category Folder Structure
+- Each category will have its own folder within the `categories` directory. The structure will look like this:
+```
+categories/
+├── example_category/
+│   ├── example_video.mp4.json  # Annotation file for the video
+│   └── config.json              # Configuration file for the category (id ,color, events)
+```
+
+### Event Types and Categories
+- Event types can be configured in the `config/annotation_types.json` file. You can add, edit, or remove event types as needed.
+
 
 ## Development
 - Frontend: HTML, CSS, JavaScript, jQuery

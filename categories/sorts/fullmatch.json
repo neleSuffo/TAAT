@@ -1,0 +1,14 @@
+{
+    "video_name": "fullmatch.mp4",
+    "category_id": "sorts",
+    "annotations": [
+        {
+            "time": 0,
+            "categoryId": "sorts",
+            "eventId": "sort3",
+            "fields": {
+                "ss": "s1"
+            }
+        }
+    ]
+}

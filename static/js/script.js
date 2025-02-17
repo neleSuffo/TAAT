@@ -212,8 +212,8 @@ $(document).ready(function () {
         saveAnnotations() {
             if (!videoFile || !selectedCategoryId) {
                 console.error('Missing required data for saving annotations');
-                return;
-            }
+            return;
+        }
 
             const annotationData = {
                 filename: videoFile.name,
@@ -223,10 +223,10 @@ $(document).ready(function () {
 
             console.log('Saving annotations:', annotationData);
 
-            $.ajax({
+        $.ajax({
                 url: '/save_annotations',
-                type: 'POST',
-                contentType: 'application/json',
+            type: 'POST',
+            contentType: 'application/json',
                 data: JSON.stringify(annotationData),
                 success: (response) => {
                     console.log('Annotations saved successfully:', response);
@@ -454,7 +454,7 @@ $(document).ready(function () {
                     showToast('Annotation updated successfully', 'success');
                 }
             });
-
+            
             // Show the modal
             const modal = new bootstrap.Modal(document.getElementById('editAnnotationModal'));
             modal.show();

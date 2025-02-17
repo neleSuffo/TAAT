@@ -149,6 +149,41 @@
             ],
             "id": "kora",
             "name": "kora"
+        },
+        {
+            "id": "sorts",
+            "name": "sorts",
+            "color": "#353a7e",
+            "events": [
+                {
+                    "id": "sort1",
+                    "name": "sort1",
+                    "color": "#000000",
+                    "customFields": []
+                },
+                {
+                    "id": "sort2",
+                    "name": "sort2",
+                    "color": "#000000",
+                    "customFields": []
+                },
+                {
+                    "id": "sort3",
+                    "name": "sort3",
+                    "color": "#000000",
+                    "customFields": [
+                        {
+                            "name": "ss",
+                            "type": "select",
+                            "required": false,
+                            "options": [
+                                "s1",
+                                "s2"
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

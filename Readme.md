@@ -2,7 +2,7 @@
 
 A web-based tool for temporal annotation of videos. This tool allows users to create custom categories with events and add timestamped annotations to videos.
 
-![image](image.png)
+![image](Capture.JPG)
 
 ## Features
 

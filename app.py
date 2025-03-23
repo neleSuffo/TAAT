@@ -228,7 +228,19 @@ def save_annotations():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    # First, check if the file exists in 'uploads'
+    upload_path = Path(app.config['UPLOAD_FOLDER']) / filename
+    if upload_path.exists():
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+    # If not found, search in category folders
+    for category_folder in Path(app.config['CATEGORIES_FOLDER']).iterdir():
+        category_path = category_folder / filename
+        if category_path.exists():
+            return send_from_directory(str(category_folder), filename)  # ✅ FIXED: Now correctly returns file
+    
+    # If file is not found, return a 404 error
+    return jsonify({'error': 'File not found'}), 404
 
 @app.route('/get_annotations/<filename>')
 def get_annotations(filename):

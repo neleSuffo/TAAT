@@ -286,7 +286,8 @@ $(document).ready(function () {
                     ...startAnnotation,  // Keep all fields from start annotation
                     endTime: currentTime,
                     duration: currentTime - startAnnotation.time,
-                    type: 'complete'
+                    type: 'complete',
+                    videoName: videoFile.name  // Add video name to the annotation
                 };
         
                 // Remove the start annotation from annotations array
@@ -315,7 +316,8 @@ $(document).ready(function () {
                     categoryId: categoryId,
                     eventId: eventId,
                     fields: fields,
-                    type: 'start'
+                    type: 'start',
+                    videoName: videoFile.name  // Add video name to start annotation as well
                 };
         
                 this.activeAnnotations.set(eventId, startAnnotation);

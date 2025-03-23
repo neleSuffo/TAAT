@@ -199,21 +199,74 @@ def save_annotations():
 
         filename = data.get('filename')
         category_id = data.get('categoryId')
-        annotations = data.get('annotations', [])
+        new_annotations = data.get('annotations', [])
         active_annotations = data.get('activeAnnotations', {})
 
         if not all([filename, category_id]):
             return jsonify({'error': 'Missing required data'}), 400
 
-        # Create the annotation file path in the category folder
+        # Create the annotation file path
         category_folder = Path(app.config['CATEGORIES_FOLDER']) / category_id
         annotation_file = category_folder / f"{filename.rsplit('.', 1)[0]}.json"
+
+        # Load existing annotations if file exists
+        if annotation_file.exists():
+            with annotation_file.open('r') as f:
+                existing_data = json.load(f)
+                existing_annotations = existing_data.get('annotations', [])
+        else:
+            existing_annotations = []
+
+        # Process annotations
+        processed_annotations = []
+        start_annotations = {}  # event_id -> annotation mapping
+        
+        # Combine existing and new annotations
+        all_annotations = existing_annotations + new_annotations
+
+        # Process all annotations
+        for ann in all_annotations:
+            event_id = ann.get('event')
+            ann_type = ann.get('type')
+
+            if ann_type == 'start':
+                # Store start annotation, overwriting any previous start for this event
+                start_annotations[event_id] = ann
+            elif ann_type == 'end' and event_id in start_annotations:
+                # Create merged annotation using start annotation as base
+                start_ann = start_annotations[event_id]
+                merged_ann = start_ann.copy()  # Start with all start fields
+                
+                # Only update specific end-related fields
+                merged_ann.update({
+                    'endTime': ann.get('time'),
+                    'duration': ann.get('time') - start_ann.get('time', 0),
+                    'type': 'complete'
+                })
+                
+                # Remove the original start annotation if it exists in processed_annotations
+                processed_annotations = [a for a in processed_annotations 
+                                      if not (a.get('type') == 'start' and a.get('event') == event_id)]
+                
+                # Add the merged annotation
+                processed_annotations.append(merged_ann)
+                
+                # Remove from start_annotations to prevent duplicates
+                del start_annotations[event_id]
+            elif ann_type != 'start' and ann not in processed_annotations:
+                # Add non-start annotations that aren't already present
+                processed_annotations.append(ann)
+
+        # Add any remaining start annotations that haven't been completed
+        for start_ann in start_annotations.values():
+            if start_ann not in processed_annotations:
+                processed_annotations.append(start_ann)
 
         # Prepare the annotation data structure
         annotation_data = {
             "video_name": filename,
             "category_id": category_id,
-            "annotations": annotations,
+            "annotations": processed_annotations,
             "activeAnnotations": active_annotations
         }
 
@@ -223,12 +276,16 @@ def save_annotations():
 
         return jsonify({
             'message': 'Annotations saved successfully',
-            'activeAnnotations': active_annotations
+            'activeAnnotations': active_annotations,
+            'annotations': processed_annotations
         })
 
     except Exception as e:
         print(f"Error saving annotation: {str(e)}")
-        return jsonify({'error': f'Error saving annotation: {str(e)}'}), 500
+        return jsonify({
+            'error': f'Error saving annotation: {str(e)}',
+            'data_received': data
+        }), 500
 
 @app.route('/get_annotation_state/<category_id>/<filename>/<event_id>', methods=['GET'])
 def get_annotation_state(category_id, filename, event_id):

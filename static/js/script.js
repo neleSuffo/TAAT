@@ -275,7 +275,6 @@ $(document).ready(function () {
     
             const [categoryId, eventId] = eventValue.split(':');
             const currentTime = player.currentTime();
-    
             const isActive = this.activeAnnotations.has(eventId);
     
             const fields = {};
@@ -286,34 +285,33 @@ $(document).ready(function () {
             });
     
             if (isActive) {
+                // This is an end annotation - use fields from start annotation
                 const startAnnotation = this.activeAnnotations.get(eventId);
                 const completeAnnotation = {
-                    startTime: startAnnotation.time,
+                    ...startAnnotation,  // Keep all fields from start annotation
                     endTime: currentTime,
                     duration: currentTime - startAnnotation.time,
-                    categoryId: categoryId,
-                    eventId: eventId,
-                    fields: fields,
                     type: 'complete'
                 };
     
                 this.annotations.push(completeAnnotation);
                 this.activeAnnotations.delete(eventId);
-    
+        
                 this.updateEventButtonState(eventId, false);
                 showToast('Activity completed', 'success');
             } else {
+                // This is a start annotation
                 const startAnnotation = {
                     time: currentTime,
                     categoryId: categoryId,
                     eventId: eventId,
-                    fields: fields,
+                    fields: fields,  // Save fields with start annotation
                     type: 'start'
                 };
     
                 this.activeAnnotations.set(eventId, startAnnotation);
                 this.annotations.push(startAnnotation);
-    
+        
                 this.updateEventButtonState(eventId, true);
                 showToast('Activity started', 'success');
             }
@@ -321,7 +319,7 @@ $(document).ready(function () {
             this.saveAnnotations();
             updateVideoMarkers();
             this.updateAnnotationsList();
-    
+        
             const modal = bootstrap.Modal.getInstance(document.getElementById('annotationModal'));
             if (modal) modal.hide();
         },

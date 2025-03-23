@@ -190,20 +190,30 @@ $(document).ready(function () {
                 const category = CategoryManager.categories.find(c => c.id === annotation.categoryId);
                 const event = category?.events.find(e => e.id === annotation.eventId);
                 
-                if (!category || !event) {
-                    console.warn('Category or event not found for annotation:', annotation);
-                    return;
+                if (!category || !event) return;
+        
+                let timeDisplay;
+                if (annotation.type === 'start') {
+                    const endPoint = this.annotations.find(a => 
+                        a.type === 'end' && a.startAnnotationId === annotation.id
+                    );
+                    timeDisplay = endPoint ? 
+                        `Start: ${formatTime(annotation.time)} (End: ${formatTime(endPoint.time)})` :
+                        `Start: ${formatTime(annotation.time)}`;
+                } else if (annotation.type === 'end') {
+                    const startPoint = this.annotations.find(a => 
+                        a.type === 'start' && a.id === annotation.startAnnotationId
+                    );
+                    timeDisplay = startPoint ? 
+                        `End: ${formatTime(annotation.time)} (Start: ${formatTime(startPoint.time)})` :
+                        `End: ${formatTime(annotation.time)}`;
                 }
-
-                const timeDisplay = annotation.type === 'complete' ?
-                    `${formatTime(annotation.startTime)} - ${formatTime(annotation.endTime)}` :
-                    `Start: ${formatTime(annotation.time)}`;
-
+        
                 const annotationElement = $(`
                     <div class="annotation-item mb-2 p-2 rounded cursor-pointer" 
                          style="border-left: 3px solid ${event.color}; background-color: ${event.color}10"
                          data-time="${annotation.time}"
-                         data-annotation-index="${this.annotations.indexOf(annotation)}">
+                         data-annotation-index="${index}">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="annotation-content" style="flex-grow: 1;">
                                 <div class="fw-bold">${timeDisplay}</div>
@@ -212,46 +222,58 @@ $(document).ready(function () {
                             </div>
                             <div class="annotation-actions">
                                 <button class="btn btn-sm btn-outline-secondary edit-annotation me-1" 
-                                        data-index="${this.annotations.indexOf(annotation)}">
+                                        data-index="${index}">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-danger delete-annotation" 
-                                        data-index="${this.annotations.indexOf(annotation)}">
+                                        data-index="${index}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                `);
-                
-                annotationElement.find('.annotation-content').on('click', function() {
-                    const time = $(this).closest('.annotation-item').data('time');
-                    if (player) {
-                        player.currentTime(time);
-                        player.play();
-                    }
-                });
-
+                `)
+                        // Add click handler for the edit button
                 annotationElement.find('.edit-annotation').on('click', (e) => {
                     e.stopPropagation();
                     this.showEditAnnotationModal(annotation, index);
                 });
 
-                annotationElement.find('.delete-annotation').on('click', (e) => {
-                    e.stopPropagation();
-                    const actualIndex = $(e.currentTarget).data('index');
-                    console.log('Deleting annotation at index:', actualIndex);
-                    
-                    if (confirm('Are you sure you want to delete this annotation?')) {
-                        this.annotations.splice(actualIndex, 1);
-                        this.saveAnnotations();
-                        updateVideoMarkers();
-                        this.updateAnnotationsList();
+                // Add click handler for jumping to time
+                annotationElement.on('click', function() {
+                    const time = $(this).data('time');
+                    if (player) {
+                        player.currentTime(time);
                     }
                 });
-
+        
+                // ...existing click handlers...
                 annotationsList.append(annotationElement);
             });
+        },
+        
+        // Add method to get complete annotations for export
+        getExportAnnotations() {
+            const exportAnnotations = [];
+            
+            this.annotations.forEach(startAnnotation => {
+                if (startAnnotation.type === 'start') {
+                    const endAnnotation = this.annotations.find(a => 
+                        a.type === 'end' && a.startAnnotationId === startAnnotation.id
+                    );
+                    
+                    if (endAnnotation) {
+                        exportAnnotations.push({
+                            ...startAnnotation,
+                            endTime: endAnnotation.time,
+                            duration: endAnnotation.time - startAnnotation.time,
+                            type: 'complete'
+                        });
+                    }
+                }
+            });
+            
+            return exportAnnotations;
         },
 
         renderAnnotationFields(fields) {
@@ -281,27 +303,24 @@ $(document).ready(function () {
                 // This is an end annotation - use fields from start annotation
                 const startAnnotation = this.activeAnnotations.get(eventId);
                 
-                // Create complete annotation with all fields from start annotation
-                const completeAnnotation = {
-                    ...startAnnotation,  // Keep all fields from start annotation
-                    endTime: currentTime,
-                    duration: currentTime - startAnnotation.time,
-                    type: 'complete',
-                    videoName: videoFile.name  // Add video name to the annotation
+                // Create end point annotation
+                const endAnnotation = {
+                    time: currentTime,
+                    categoryId: categoryId,
+                    eventId: eventId,
+                    type: 'end',
+                    startAnnotationId: startAnnotation.id, // Link to start point
+                    fields: startAnnotation.fields, // Keep fields from start
+                    videoName: videoFile.name
                 };
         
-                // Remove the start annotation from annotations array
-                this.annotations = this.annotations.filter(a => 
-                    !(a.type === 'start' && a.eventId === eventId)
-                );
-        
-                // Add the complete annotation
-                this.annotations.push(completeAnnotation);
+                        // Add end annotation
+                this.annotations.push(endAnnotation);
                 
-                // Remove from active annotations
+                // Update display state
                 this.activeAnnotations.delete(eventId);
                 this.updateEventButtonState(eventId, false);
-                showToast('Activity completed', 'success');
+                showToast('Activity end point set', 'success');
             } else {
                 // This is a start annotation
                 const fields = {};
@@ -310,26 +329,27 @@ $(document).ready(function () {
                     fields[field.attr('name')] = field.attr('type') === 'checkbox' ?
                         field.is(':checked') : field.val();
                 });
-        
+
                 const startAnnotation = {
+                    id: `${eventId}_${Date.now()}`, // Unique ID for linking
                     time: currentTime,
                     categoryId: categoryId,
                     eventId: eventId,
                     fields: fields,
                     type: 'start',
-                    videoName: videoFile.name  // Add video name to start annotation as well
+                    videoName: videoFile.name
                 };
-        
+
                 this.activeAnnotations.set(eventId, startAnnotation);
                 this.annotations.push(startAnnotation);
                 this.updateEventButtonState(eventId, true);
-                showToast('Activity started', 'success');
+                showToast('Activity start point set', 'success');
             }
-        
+
             this.saveAnnotations();
             updateVideoMarkers();
             this.updateAnnotationsList();
-        
+
             const modal = bootstrap.Modal.getInstance(document.getElementById('annotationModal'));
             if (modal) modal.hide();
         },
@@ -401,14 +421,17 @@ $(document).ready(function () {
             const timeSeconds = Math.floor(annotation.time % 60);
             $('#editAnnotationMinutes').val(timeMinutes);
             $('#editAnnotationSeconds').val(timeSeconds);
-
+        
+            // Add indication of which point is being edited
+            const pointType = annotation.type === 'start' ? 'Start' : 'End';
+            $('#editAnnotationModalLabel').text(`Edit ${pointType} Point`);
+        
             const editAnnotationSelect = $('#editAnnotationEvent');
             editAnnotationSelect.empty();
             editAnnotationSelect.append('<option value="">Select an event</option>');
-
+        
             const category = CategoryManager.categories.find(c => c.id === annotation.categoryId);
             if (category && category.events.length > 0) {
-                console.log('Loading events for edit modal:', category.name);
                 category.events.forEach(event => {
                     editAnnotationSelect.append(`
                         <option value="${category.id}:${event.id}" 
@@ -495,44 +518,31 @@ $(document).ready(function () {
             updateCustomFields();
 
             $('#updateAnnotationBtn').off('click').on('click', () => {
-                const index = parseInt($('#editAnnotationIndex').val());
                 const minutes = parseInt($('#editAnnotationMinutes').val()) || 0;
                 const seconds = parseInt($('#editAnnotationSeconds').val()) || 0;
-                const eventValue = $('#editAnnotationEvent').val();
-
-                if (!eventValue) {
-                    showToast('Please select an event', 'error');
-                    return;
-                }
-
-                const [categoryId, eventId] = eventValue.split(':');
-                const time = minutes * 60 + seconds;
-
-                const fields = {};
-                $('#editCustomFields [name]').each(function() {
-                    const field = $(this);
-                    if (field.attr('type') === 'checkbox') {
-                        fields[field.attr('name')] = field.is(':checked');
-                    } else {
-                        fields[field.attr('name')] = field.val();
-                    }
-                });
-
+                const newTime = minutes * 60 + seconds;
+        
                 if (index >= 0 && index < this.annotations.length) {
-                    this.annotations[index] = {
-                        ...this.annotations[index],
-                        time: time,
-                        categoryId: categoryId,
-                        eventId: eventId,
-                        fields: fields
-                    };
-
+                    // Update the time for this point
+                    this.annotations[index].time = newTime;
+        
+                    // If this is a start point, update any matching end point's fields
+                    if (annotation.type === 'start') {
+                        const endPoint = this.annotations.find(a => 
+                            a.type === 'end' && a.startAnnotationId === annotation.id
+                        );
+                        if (endPoint) {
+                            endPoint.fields = annotation.fields; // Keep fields in sync
+                        }
+                    }
+        
                     this.saveAnnotations();
                     updateVideoMarkers();
+                    this.updateAnnotationsList();
                     
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnotationModal'));
                     modal.hide();
-                    showToast('Annotation updated successfully', 'success');
+                    showToast(`${pointType} point updated successfully`, 'success');
                 }
             });
             

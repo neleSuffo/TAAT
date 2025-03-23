@@ -1,184 +1,2114 @@
 {
     "annotation_categories": [
         {
-            "color": "#FF5733",
-            "description": "Actions performed by humans",
-            "events": [
-                {
-                    "color": "#FF7755",
-                    "description": "Person walking",
-                    "id": "walking",
-                    "name": "Walking"
-                },
-                {
-                    "color": "#FF9977",
-                    "description": "Person running",
-                    "id": "running",
-                    "name": "Running"
-                },
-                {
-                    "color": "#ff5733",
-                    "description": "boxing event",
-                    "id": "boxing",
-                    "name": "boxing"
-                }
-            ],
             "id": "human_actions",
-            "name": "Human Actions"
-        },
-        {
-            "color": "#33FF57",
-            "description": "Events related to vehicles",
+            "name": "Human Actions",
+            "color": "#ff5733",
             "events": [
                 {
-                    "color": "#55FF77",
-                    "description": "Car passes through frame",
-                    "id": "car_passing",
-                    "name": "Car Passing"
-                }
-            ],
-            "id": "vehicle_events",
-            "name": "Vehicle Events"
-        },
-        {
-            "id": "football",
-            "name": "football",
-            "color": "#b49d9f",
-            "events": [
-                {
-                    "id": "foul",
-                    "name": "foul",
-                    "color": "#b49d9f",
-                    "customFields": []
-                },
-                {
-                    "id": "offside",
-                    "name": "offside",
-                    "color": "#3d3434",
-                    "customFields": []
-                },
-                {
-                    "id": "handes",
-                    "name": "handes",
-                    "color": "#b49d9f",
-                    "customFields": []
-                },
-                {
-                    "id": "play",
-                    "name": "play",
-                    "color": "#b49d9f",
-                    "customFields": []
-                },
-                {
-                    "id": "penalty",
-                    "name": "penalty",
-                    "color": "#b49d9f",
-                    "customFields": []
-                },
-                {
-                    "id": "no",
-                    "name": "no",
-                    "color": "#b49d9f",
+                    "id": "playing_with_object",
+                    "name": "Playing with Object",
+                    "color": "#fe8800",
                     "customFields": [
                         {
-                            "name": "team",
+                            "name": "Alone?",
                             "type": "select",
-                            "required": false,
+                            "required": true,
                             "options": [
-                                "home",
-                                "away"
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
                             ]
                         }
                     ]
                 },
                 {
-                    "id": "pass",
-                    "name": "pass",
-                    "color": "#ff0015",
-                    "customFields": []
-                }
-            ]
-        },
-        {
-            "color": "#b3c5fb",
-            "description": "",
-            "events": [],
-            "id": "animals",
-            "name": "animals"
-        },
-        {
-            "color": "#000000",
-            "events": [
-                {
-                    "color": "#000000",
+                    "id": "playing_without_object",
+                    "name": "Playing without Object",
+                    "color": "#f6d78a",
                     "customFields": [
                         {
-                            "name": "gender",
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
                             "options": [
-                                "male",
-                                "woman"
-                            ],
-                            "required": false,
-                            "type": "select"
+                                "Yes",
+                                "No"
+                            ]
                         },
                         {
-                            "name": "quality",
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
                             "options": [
-                                "high",
-                                "low"
-                            ],
-                            "required": false,
-                            "type": "select"
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
                         }
-                    ],
-                    "id": "sleep",
-                    "name": "sleep"
+                    ]
                 },
                 {
-                    "color": "#000000",
-                    "customFields": [],
-                    "id": "naming",
-                    "name": "naming"
+                    "id": "pretend_play",
+                    "name": "Pretend play",
+                    "color": "#ff522d",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
                 },
                 {
-                    "color": "#000000",
-                    "description": "kkkk event",
-                    "id": "kkkk",
-                    "name": "kkkk"
-                }
-            ],
-            "id": "kora",
-            "name": "kora"
-        },
-        {
-            "id": "sorts",
-            "name": "sorts",
-            "color": "#353a7e",
-            "events": [
-                {
-                    "id": "sort1",
-                    "name": "sort1",
-                    "color": "#000000",
-                    "customFields": []
+                    "id": "reading_a_book",
+                    "name": "Reading a Book",
+                    "color": "#e1972f",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
                 },
                 {
-                    "id": "sort2",
-                    "name": "sort2",
-                    "color": "#000000",
-                    "customFields": []
-                },
-                {
-                    "id": "sort3",
-                    "name": "sort3",
+                    "id": "watching_something",
+                    "name": "Watching Something",
                     "color": "#000000",
                     "customFields": [
                         {
-                            "name": "ss",
+                            "name": "Alone?",
                             "type": "select",
-                            "required": false,
+                            "required": true,
                             "options": [
-                                "s1",
-                                "s2"
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "child_talking",
+                    "name": "Child Talking",
+                    "color": "#00eb00",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "other_person_talking",
+                    "name": "Other Person Talking",
+                    "color": "#23ab00",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "overheard_speech",
+                    "name": "Overheard Speech",
+                    "color": "#46b3ca",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "listening_to_music/audiobook",
+                    "name": "Listening to Music/Audiobook",
+                    "color": "#00dfb6",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "drawing",
+                    "name": "Drawing",
+                    "color": "#d48acd",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "crafting_things",
+                    "name": "Crafting Things",
+                    "color": "#804fce",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "singing/humming",
+                    "name": "Singing/Humming",
+                    "color": "#219860",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "making_music",
+                    "name": "Making Music",
+                    "color": "#ff00bf",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "dancing",
+                    "name": "Dancing",
+                    "color": "#db000c",
+                    "customFields": [
+                        {
+                            "name": "Alone?",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "1st Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "2nd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "3rd Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "4th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "5th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Age Group",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Infant",
+                                "Child",
+                                "Adolescent",
+                                "Adult",
+                                "Unknown"
+                            ]
+                        },
+                        {
+                            "name": "6th Person Gender",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Male",
+                                "Female",
+                                "Unknown"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "exclude",
+                    "name": "Exclude",
+                    "color": "#4c62ff",
+                    "customFields": [
+                        {
+                            "name": "Type of Scenes",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Nudity",
+                                "Violence",
+                                "Excessive Swearing"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "location",
+                    "name": "Location",
+                    "color": "#d3c1d5",
+                    "customFields": [
+                        {
+                            "name": "Type of Location",
+                            "type": "select",
+                            "required": true,
+                            "options": [
+                                "Playroom",
+                                "Livingroom",
+                                "Bathroom",
+                                "Hallway",
+                                "Other"
                             ]
                         }
                     ]

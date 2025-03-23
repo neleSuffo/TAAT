@@ -24,7 +24,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'  # Where videos are stored
 app.config['ANNOTATIONS_FOLDER'] = 'annotations'  # Where annotation data is stored
 app.config['EVENT_TYPES_FILE'] = 'config/annotation_types.json'  # Event configuration
 app.config['CATEGORIES_FOLDER'] = 'categories'  # Category-specific data
-app.config['MAX_CONTENT_LENGTH'] = 1000 * 1024 * 1024  # 500MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1000 * 1024 * 1024  # 500MB max file size
 
 # Create necessary directories
 for directory in ['uploads', 'annotations', 'categories', 'config']:
@@ -199,33 +199,86 @@ def save_annotations():
 
         filename = data.get('filename')
         category_id = data.get('categoryId')
-        annotations = data.get('annotations')
+        annotations = data.get('annotations', [])
+        active_annotations = data.get('activeAnnotations', {})
 
-        if not all([filename, category_id, annotations]):
+        if not all([filename, category_id]):
             return jsonify({'error': 'Missing required data'}), 400
 
         # Create the annotation file path in the category folder
         category_folder = Path(app.config['CATEGORIES_FOLDER']) / category_id
         annotation_file = category_folder / f"{filename.rsplit('.', 1)[0]}.json"
 
-        # Prepare annotation data
+        # Prepare the annotation data structure
         annotation_data = {
             "video_name": filename,
             "category_id": category_id,
-            "annotations": sorted(annotations, key=lambda x: x['time'])
+            "annotations": annotations,
+            "activeAnnotations": active_annotations
         }
 
-        # Save annotations
+        # Save updated annotations
         with annotation_file.open('w') as f:
             json.dump(annotation_data, f, indent=4)
 
-        print(f"Saved annotations to {annotation_file}")  # Debug log
-        return jsonify({'message': 'Annotations saved successfully'})
+        return jsonify({
+            'message': 'Annotations saved successfully',
+            'activeAnnotations': active_annotations
+        })
 
     except Exception as e:
-        print(f"Error saving annotations: {str(e)}")  # Debug log
-        return jsonify({'error': f'Error saving annotations: {str(e)}'}), 500
+        print(f"Error saving annotation: {str(e)}")
+        return jsonify({'error': f'Error saving annotation: {str(e)}'}), 500
 
+@app.route('/get_annotation_state/<category_id>/<filename>/<event_id>', methods=['GET'])
+def get_annotation_state(category_id, filename, event_id):
+    """Check if an event has an active (started but not ended) annotation"""
+    try:
+        annotation_file = Path(app.config['CATEGORIES_FOLDER']) / category_id / f"{filename.rsplit('.', 1)[0]}.json"
+        
+        if not annotation_file.exists():
+            return jsonify({'active': False})
+            
+        with annotation_file.open('r') as f:
+            data = json.load(f)
+            
+        # Check for unmatched start annotations
+        temp_annotations = {}
+        for annotation in data.get('annotations', []):
+            if annotation.get('type') == 'start' and annotation['event'] == event_id:
+                temp_annotations[event_id] = True
+            elif annotation.get('type') == 'end' and annotation['event'] == event_id:
+                temp_annotations[event_id] = False
+                
+        return jsonify({
+            'active': temp_annotations.get(event_id, False),
+            'startTime': next((a['time'] for a in data.get('annotations', []) 
+                             if a.get('type') == 'start' and a['event'] == event_id), None)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/get_active_annotations/<category_id>/<filename>', methods=['GET'])
+def get_active_annotations(category_id, filename):
+    """Get all currently active annotations for a video"""
+    try:
+        annotation_file = Path(app.config['CATEGORIES_FOLDER']) / category_id / f"{filename.rsplit('.', 1)[0]}.json"
+        
+        if not annotation_file.exists():
+            return jsonify({'active_annotations': {}})
+            
+        with annotation_file.open('r') as f:
+            data = json.load(f)
+            
+        return jsonify({
+            'active_annotations': data.get('active_annotations', {}),
+            'annotations': data.get('annotations', [])
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     # First, check if the file exists in 'uploads'
@@ -410,8 +463,10 @@ def save_annotation_categories(categories):
 
 # Update the existing annotation structure
 def create_default_annotation():
+    """Create default annotation structure"""
     return {
-        "annotations": [],
+        "annotations": [],        # Complete annotations with start/end times
+        "active_annotations": {}, # Currently active annotations
         "categories": load_annotation_categories()['annotation_categories']
     }
 

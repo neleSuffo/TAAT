@@ -10,39 +10,100 @@ $(document).ready(function () {
         },
         
         setupVideoPlayer() {
-            // Initialize video player if needed
             if (document.getElementById('videoPlayer')) {
                 this.player = videojs('videoPlayer');
             }
         },
         
         setupEventListeners() {
-            // Video-related event listeners
             const uploadContainer = document.getElementById('uploadContainer');
             if (uploadContainer) {
-    uploadContainer.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadContainer.classList.add('drag-over');
-    });
+                uploadContainer.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadContainer.classList.add('drag-over');
+                });
 
-    uploadContainer.addEventListener('dragleave', () => {
-        uploadContainer.classList.remove('drag-over');
-    });
+                uploadContainer.addEventListener('dragleave', () => {
+                    uploadContainer.classList.remove('drag-over');
+                });
 
-    uploadContainer.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadContainer.classList.remove('drag-over');
-        const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type.startsWith('video/')) {
+                uploadContainer.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadContainer.classList.remove('drag-over');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0 && files[0].type.startsWith('video/')) {
                         this.handleVideoUpload(files[0]);
                     }
                 });
             }
+        },
+
+        handleVideoUpload(file) { // Moved here for consistency
+            if (!selectedCategoryId) {
+                showToast('Please select a category first!', 'error');
+                $('#videoUpload').val('');
+                return;
+            }
+
+            videoFile = file;
+            const formData = new FormData();
+            formData.append('video', file);
+            formData.append('categoryId', selectedCategoryId);
+
+            const uploadArea = $('#uploadArea');
+            const originalContent = uploadArea.html();
+            uploadArea.html(`
+                <div class="text-center">
+                    <div class="upload-progress mb-3">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+                    <h4 class="upload-status">Uploading video...</h4>
+                </div>
+            `);
+
+            $.ajax({
+                url: '/upload',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                xhr: function() {
+                    const xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            $('.progress-bar').css('width', percent + '%').text(percent + '%');
+                            $('.upload-status').text(`Uploading video... ${percent}%`);
+                        }
+                    }, false);
+                    return xhr;
+                },
+                success: function(response) {
+                    uploadContainer.classList.add('d-none');
+                    videoContainer.classList.remove('d-none');
+                    
+                    const newPlayer = initializeVideoPlayer(`/uploads/${response.filename}`);
+                    
+                    newPlayer.ready(function() {
+                        AnnotationManager.loadExistingAnnotations(response);
+                        showToast('Video loaded successfully!', 'success');
+                    });
+                },
+                error: function(xhr) {
+                    uploadArea.html(originalContent);
+                    showToast(xhr.responseJSON?.error || 'Error uploading video', 'error');
+                    $('#videoUpload').val('');
+                }
+            });
         }
     };
     
     const AnnotationManager = {
         annotations: [],
+        activeAnnotations: new Map(),
         selectedCategory: null,
         selectedEvent: null,
         
@@ -51,7 +112,6 @@ $(document).ready(function () {
         },
         
         setupEventListeners() {
-            // Annotation-related event listeners
             $('#addAnnotationBtn').on('click', () => this.showAddAnnotationModal());
             $('#saveAnnotationBtn').on('click', () => this.handleSaveAnnotation());
             $('#updateAnnotationBtn').click(function() {
@@ -77,8 +137,7 @@ $(document).ready(function () {
                     };
 
                     AnnotationManager.saveAnnotations();
-                    // Update markers after editing annotation
-                        updateVideoMarkers();
+                    updateVideoMarkers();
                     
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnotationModal'));
                     modal.hide();
@@ -86,7 +145,6 @@ $(document).ready(function () {
                 }
             });
 
-            // Add filter change handler
             $(document).on('change', '#annotationFilter', (e) => {
                 console.log('Filter changed:', e.target.value);
                 this.updateAnnotationsList();
@@ -106,11 +164,9 @@ $(document).ready(function () {
                 return;
             }
 
-            // Get selected filter
             const selectedFilter = $('#annotationFilter').val();
             console.log('Selected filter value:', selectedFilter);
 
-            // Filter and sort annotations
             let filteredAnnotations = [...this.annotations].sort((a, b) => a.time - b.time);
             console.log('Sorted annotations:', filteredAnnotations);
             
@@ -139,6 +195,10 @@ $(document).ready(function () {
                     return;
                 }
 
+                const timeDisplay = annotation.type === 'complete' ?
+                    `${formatTime(annotation.startTime)} - ${formatTime(annotation.endTime)}` :
+                    `Start: ${formatTime(annotation.time)}`;
+
                 const annotationElement = $(`
                     <div class="annotation-item mb-2 p-2 rounded cursor-pointer" 
                          style="border-left: 3px solid ${event.color}; background-color: ${event.color}10"
@@ -146,25 +206,24 @@ $(document).ready(function () {
                          data-annotation-index="${this.annotations.indexOf(annotation)}">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="annotation-content" style="flex-grow: 1;">
-                                <div class="fw-bold">${formatTime(annotation.time)}</div>
+                                <div class="fw-bold">${timeDisplay}</div>
                                 <div>${category.name} - ${event.name}</div>
                                 ${this.renderAnnotationFields(annotation.fields)}
                             </div>
                             <div class="annotation-actions">
                                 <button class="btn btn-sm btn-outline-secondary edit-annotation me-1" 
                                         data-index="${this.annotations.indexOf(annotation)}">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                                    <i class="fas fa-edit"></i>
+                                </button>
                                 <button class="btn btn-sm btn-outline-danger delete-annotation" 
                                         data-index="${this.annotations.indexOf(annotation)}">
                                     <i class="fas fa-trash"></i>
-                            </button>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `);
-            
-                // Add click handler for the content area
+                `);
+                
                 annotationElement.find('.annotation-content').on('click', function() {
                     const time = $(this).closest('.annotation-item').data('time');
                     if (player) {
@@ -173,13 +232,11 @@ $(document).ready(function () {
                     }
                 });
 
-                // Add edit handler
                 annotationElement.find('.edit-annotation').on('click', (e) => {
-            e.stopPropagation();
+                    e.stopPropagation();
                     this.showEditAnnotationModal(annotation, index);
                 });
 
-                // Add delete handler
                 annotationElement.find('.delete-annotation').on('click', (e) => {
                     e.stopPropagation();
                     const actualIndex = $(e.currentTarget).data('index');
@@ -189,7 +246,7 @@ $(document).ready(function () {
                         this.annotations.splice(actualIndex, 1);
                         this.saveAnnotations();
                         updateVideoMarkers();
-                        this.updateAnnotationsList(); // Refresh the list
+                        this.updateAnnotationsList();
                     }
                 });
 
@@ -209,29 +266,87 @@ $(document).ready(function () {
             `;
         },
 
+        handleSaveAnnotation() {
+            const eventValue = $('#annotationEvent').val();
+            if (!eventValue) {
+                showToast('Please select an event', 'error');
+                return;
+            }
+    
+            const [categoryId, eventId] = eventValue.split(':');
+            const currentTime = player.currentTime();
+    
+            const isActive = this.activeAnnotations.has(eventId);
+    
+            const fields = {};
+            $('#eventFields [name]').each(function() {
+                const field = $(this);
+                fields[field.attr('name')] = field.attr('type') === 'checkbox' ?
+                    field.is(':checked') : field.val();
+            });
+    
+            if (isActive) {
+                const startAnnotation = this.activeAnnotations.get(eventId);
+                const completeAnnotation = {
+                    startTime: startAnnotation.time,
+                    endTime: currentTime,
+                    duration: currentTime - startAnnotation.time,
+                    categoryId: categoryId,
+                    eventId: eventId,
+                    fields: fields,
+                    type: 'complete'
+                };
+    
+                this.annotations.push(completeAnnotation);
+                this.activeAnnotations.delete(eventId);
+    
+                this.updateEventButtonState(eventId, false);
+                showToast('Activity completed', 'success');
+            } else {
+                const startAnnotation = {
+                    time: currentTime,
+                    categoryId: categoryId,
+                    eventId: eventId,
+                    fields: fields,
+                    type: 'start'
+                };
+    
+                this.activeAnnotations.set(eventId, startAnnotation);
+                this.annotations.push(startAnnotation);
+    
+                this.updateEventButtonState(eventId, true);
+                showToast('Activity started', 'success');
+            }
+    
+            this.saveAnnotations();
+            updateVideoMarkers();
+            this.updateAnnotationsList();
+    
+            const modal = bootstrap.Modal.getInstance(document.getElementById('annotationModal'));
+            if (modal) modal.hide();
+        },
+    
         saveAnnotations() {
             if (!videoFile || !selectedCategoryId) {
                 console.error('Missing required data for saving annotations');
-            return;
-        }
-
+                return;
+            }
+    
             const annotationData = {
                 filename: videoFile.name,
                 categoryId: selectedCategoryId,
-                annotations: this.annotations
+                annotations: this.annotations,
+                activeAnnotations: Object.fromEntries(this.activeAnnotations)
             };
-
-            console.log('Saving annotations:', annotationData);
-
-        $.ajax({
+    
+            $.ajax({
                 url: '/save_annotations',
-            type: 'POST',
-            contentType: 'application/json',
+                type: 'POST',
+                contentType: 'application/json',
                 data: JSON.stringify(annotationData),
                 success: (response) => {
                     console.log('Annotations saved successfully:', response);
                     showToast('Annotations saved successfully', 'success');
-                    this.updateAnnotationsList();
                 },
                 error: (xhr) => {
                     console.error('Error saving annotations:', xhr);
@@ -239,81 +354,46 @@ $(document).ready(function () {
                 }
             });
         },
-
-        handleSaveAnnotation() {
-            const eventValue = $('#annotationEvent').val();
-            if (!eventValue) {
-                showToast('Please select an event', 'error');
-                return;
-            }
-            
-            const [categoryId, eventId] = eventValue.split(':');
-            const currentTime = player.currentTime();
-            
-            // Collect all field values
-            const fields = {};
-            $('#eventFields [name]').each(function() {
-                const field = $(this);
-                if (field.attr('type') === 'checkbox') {
-                    fields[field.attr('name')] = field.is(':checked');
-                } else {
-                    fields[field.attr('name')] = field.val();
-                }
-            });
-            
-            // Validate required fields
-            let missingFields = [];
-            $('#eventFields [required]').each(function() {
-                if (!$(this).val()) {
-                    missingFields.push($(this).closest('.mb-3').find('.form-label').text().trim());
-                }
-            });
-            
-            if (missingFields.length > 0) {
-                showToast(`Please fill in required fields: ${missingFields.join(', ')}`, 'error');
-            return;
-        }
-
-            const annotation = {
-                time: currentTime,
-                categoryId: categoryId,
-                eventId: eventId,
-                fields: fields
-            };
-            
-            this.annotations.push(annotation);
-            this.saveAnnotations();
-            
-            // Update markers after adding new annotation
-            updateVideoMarkers();
-            
-            const modal = bootstrap.Modal.getInstance(document.getElementById('annotationModal'));
-            if (modal) {
-                modal.hide();
-            }
-            
-            showToast('Annotation added successfully', 'success');
-            this.updateAnnotationsList();
-        },
-
+    
         loadExistingAnnotations(videoData) {
+            this.activeAnnotations.clear();
+            this.annotations = [];
+    
             if (videoData.annotations) {
                 this.annotations = videoData.annotations.annotations || [];
+                const active = videoData.annotations.activeAnnotations || {};
+    
+                Object.entries(active).forEach(([eventId, annotation]) => {
+                    this.activeAnnotations.set(eventId, annotation);
+                    this.updateEventButtonState(eventId, true);
+                });
+    
                 this.updateAnnotationsList();
+                updateVideoMarkers();
+            }
+        },
+
+        updateEventButtonState(eventId, isActive) {
+            const button = $(`.event-item[data-event-id="${eventId}"]`);
+            button.toggleClass('active', isActive);
+            button.attr('data-active', isActive);
+            
+            if (isActive) {
+                button.append('<span class="recording-indicator">⏺</span>');
+            } else {
+                button.find('.recording-indicator').remove();
             }
         },
 
         showEditAnnotationModal(annotation, index) {
             console.log('Editing annotation:', annotation);
             
-            // Set the form values
             $('#editAnnotationIndex').val(index);
             const timeMinutes = Math.floor(annotation.time / 60);
             const timeSeconds = Math.floor(annotation.time % 60);
             $('#editAnnotationMinutes').val(timeMinutes);
             $('#editAnnotationSeconds').val(timeSeconds);
 
-            // Update event dropdown with only the selected category's events
             const editAnnotationSelect = $('#editAnnotationEvent');
             editAnnotationSelect.empty();
             editAnnotationSelect.append('<option value="">Select an event</option>');
@@ -332,12 +412,10 @@ $(document).ready(function () {
                 });
             }
 
-            // Add custom fields container if it doesn't exist
             if (!$('#editCustomFields').length) {
                 $('.modal-body #editAnnotationForm').append('<div id="editCustomFields" class="mt-3"></div>');
             }
 
-            // Handle custom fields
             const updateCustomFields = () => {
                 const [categoryId, eventId] = editAnnotationSelect.val().split(':');
                 const selectedCategory = CategoryManager.categories.find(c => c.id === categoryId);
@@ -405,13 +483,9 @@ $(document).ready(function () {
                 }
             };
 
-            // Add change handler for event selection
             editAnnotationSelect.off('change').on('change', updateCustomFields);
-
-            // Initialize custom fields for current event
             updateCustomFields();
 
-            // Update the save handler
             $('#updateAnnotationBtn').off('click').on('click', () => {
                 const index = parseInt($('#editAnnotationIndex').val());
                 const minutes = parseInt($('#editAnnotationMinutes').val()) || 0;
@@ -426,7 +500,6 @@ $(document).ready(function () {
                 const [categoryId, eventId] = eventValue.split(':');
                 const time = minutes * 60 + seconds;
 
-                // Collect custom fields
                 const fields = {};
                 $('#editCustomFields [name]').each(function() {
                     const field = $(this);
@@ -455,7 +528,6 @@ $(document).ready(function () {
                 }
             });
             
-            // Show the modal
             const modal = new bootstrap.Modal(document.getElementById('editAnnotationModal'));
             modal.show();
         },
@@ -463,33 +535,25 @@ $(document).ready(function () {
         showAddAnnotationModal() {
             if (!player) {
                 showToast('Please upload a video first', 'error');
-            return;
-        }
+                return;
+            }
 
-            // Pause the video
             player.pause();
             
-            // Show annotation modal with current time
             const currentTime = player.currentTime();
             $('#annotationTime').text(formatTime(currentTime));
             
-            // Reset form
             $('#annotationEvent').val('');
             $('#eventFields').empty();
             
-            // Update event dropdown
             this.updateAnnotationEventDropdown();
             
-            // Get modal element
             const modalElement = document.getElementById('annotationModal');
             const modal = new bootstrap.Modal(modalElement);
 
-            // Add hidden event handler to clean up
             $(modalElement).one('hidden.bs.modal', () => {
-                // Clean up event handlers
                 $('#annotationEvent').off('change');
                 $('#eventFields').empty();
-                // Resume video if needed
                 if (player) {
                     player.play();
                 }
@@ -500,19 +564,16 @@ $(document).ready(function () {
 
         updateAnnotationEventDropdown() {
             const annotationEventSelect = $('#annotationEvent');
-            // Only proceed if the select element exists
             if (!annotationEventSelect.length) return;
 
             annotationEventSelect.empty();
             annotationEventSelect.append('<option value="">Select an event</option>');
 
-            // Find the selected category
             const selectedCategory = CategoryManager.categories.find(c => c.id === selectedCategoryId);
             
             if (selectedCategory && selectedCategory.events.length > 0) {
                 console.log('Loading events for category:', selectedCategory.name);
                 
-                // Add events from selected category only
                 selectedCategory.events.forEach(event => {
                     annotationEventSelect.append(`
                         <option value="${selectedCategory.id}:${event.id}" 
@@ -526,7 +587,6 @@ $(document).ready(function () {
                 annotationEventSelect.append('<option value="" disabled>No events available</option>');
             }
 
-            // Add change handler for custom fields
             annotationEventSelect.off('change').on('change', (e) => {
                 const [categoryId, eventId] = e.target.value.split(':');
                 const category = CategoryManager.categories.find(c => c.id === categoryId);
@@ -539,7 +599,6 @@ $(document).ready(function () {
                 }
             });
 
-            // Also update the filter dropdown
             const filterSelect = $('#annotationFilter');
             filterSelect.empty();
             filterSelect.append('<option value="all">All Events</option>');
@@ -552,7 +611,6 @@ $(document).ready(function () {
                 });
             }
 
-            // Add change handler for filter
             filterSelect.off('change').on('change', () => {
                 this.updateAnnotationsList();
             });
@@ -616,59 +674,50 @@ $(document).ready(function () {
         setupEventListeners() {
             console.log('CategoryManager: Setting up event listeners');
             
-            // Add Category button
             $(document).on('click', '#addCategoryBtn', () => {
                 console.log('Add category button clicked');
                 $('#categoryName').val('');
                 $('#categoryColor').val('#808080');
                 $('#categoryEvents').val('');
                 const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
-            modal.show();
-        });
+                modal.show();
+            });
 
-            // Save category button
             $(document).on('click', '#saveCategoryBtn', () => {
                 console.log('Save category button clicked');
                 this.handleSaveCategory();
             });
 
-            // Save event button
             $(document).on('click', '#saveEventBtn', () => {
                 console.log('Save event button clicked');
                 this.handleSaveEvent();
             });
 
-            // Category item click - Updated to collapse other categories
             $(document).on('click', '.category-item', function(e) {
                 if (!$(e.target).closest('.category-actions').length) {
                     console.log('Category clicked');
                     
-                    // Remove active class from all categories and collapse them
                     $('.category-item').not(this).removeClass('active');
                     $('.category-item').not(this).find('.category-events').slideUp();
                     $('.category-item').not(this).find('.toggle-events i')
                         .removeClass('fa-chevron-up')
                         .addClass('fa-chevron-down');
                     
-                    // Handle the clicked category
                     const $this = $(this);
                     $this.addClass('active');
                     
-                    // Show this category's events
                     $this.find('.category-events').slideDown();
                     $this.find('.toggle-events i')
                         .removeClass('fa-chevron-down')
                         .addClass('fa-chevron-up');
                     
-                    // Update selected category
                     selectedCategoryId = $this.data('category-id');
                     $('#uploadContainer').removeClass('disabled');
                 }
             });
 
-            // Toggle events
             $(document).on('click', '.toggle-events', (e) => {
-                e.stopPropagation(); // Prevent category selection when clicking toggle
+                e.stopPropagation();
                 const categoryItem = $(e.currentTarget).closest('.category-item');
                 const eventsDiv = categoryItem.find('.category-events');
                 const icon = $(e.currentTarget).find('i');
@@ -678,7 +727,6 @@ $(document).ready(function () {
                 });
             });
 
-            // Add event
             $(document).on('click', '.add-event', (e) => {
                 console.log('Add event clicked');
                 e.stopPropagation();
@@ -687,7 +735,6 @@ $(document).ready(function () {
                 this.showAddEventModal(categoryId);
             });
 
-            // Delete event
             $(document).on('click', '.delete-event', (e) => {
                 console.log('Delete event clicked');
                 e.stopPropagation();
@@ -701,7 +748,6 @@ $(document).ready(function () {
                 }
             });
 
-            // Update event selection handler
             $(document).on('click', '.event-item', function(e) {
                 e.stopPropagation();
                 console.log('Event item clicked');
@@ -727,7 +773,6 @@ $(document).ready(function () {
                     $('#selectedEventDisplay').text(`${category.name} - ${event.name}`);
                     $('#addAnnotationBtn').prop('disabled', false);
                     
-                    // Update filter dropdown and select the current event
                     const filterSelect = $('#annotationFilter');
                     console.log('Current filter value before update:', filterSelect.val());
                     
@@ -746,32 +791,27 @@ $(document).ready(function () {
                         });
                     }
                     
-                    // Set the value and trigger change explicitly
                     console.log('Setting filter to:', eventId);
                     filterSelect.val(eventId);
                     console.log('Filter value after set:', filterSelect.val());
                     filterSelect.trigger('change');
                     
-                    // Update annotation event dropdown if it exists
                     if (typeof AnnotationManager !== 'undefined' && AnnotationManager.updateAnnotationEventDropdown) {
                         AnnotationManager.updateAnnotationEventDropdown();
                     }
                 }
             });
 
-            // Update edit category handler
             $(document).on('click', '.edit-category', (e) => {
                 e.stopPropagation();
                 const categoryId = $(e.currentTarget).closest('.category-item').data('category-id');
                 window.location.href = `/category_setup?category_id=${categoryId}`;
             });
 
-            // Add save edited category handler
             $(document).on('click', '#saveEditCategoryBtn', () => {
                 this.handleEditCategory();
             });
 
-            // Delete category handler
             $(document).on('click', '.delete-category', (e) => {
                 e.stopPropagation();
                 const categoryItem = $(e.currentTarget).closest('.category-item');
@@ -783,7 +823,6 @@ $(document).ready(function () {
                 }
             });
 
-            // Update the collapse all categories handler
             $(document).on('click', '.collapse-categories', (e) => {
                 e.stopPropagation();
                 const $button = $(e.currentTarget);
@@ -792,7 +831,6 @@ $(document).ready(function () {
                 const $allCategories = $('.category-item');
                 
                 if ($icon.hasClass('fa-chevron-up')) {
-                    // Hide all categories except the active one
                     $allCategories.each(function() {
                         const $category = $(this);
                         const $eventsList = $category.find('.events-list');
@@ -807,7 +845,6 @@ $(document).ready(function () {
                     });
                     $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
                 } else {
-                    // Show all categories
                     $allCategories.each(function() {
                         const $category = $(this);
                         const $eventsList = $category.find('.events-list');
@@ -830,11 +867,11 @@ $(document).ready(function () {
             
             console.log('Category data:', { name, color, eventsText });
         
-        if (!name) {
-            showToast('Please enter a category name', 'error');
-            return;
-        }
-        
+            if (!name) {
+                showToast('Please enter a category name', 'error');
+                return;
+            }
+            
             const categoryId = name.toLowerCase().replace(/\s+/g, '_');
             
             if (this.categories.some(c => c.id === categoryId)) {
@@ -869,53 +906,47 @@ $(document).ready(function () {
         },
 
         handleSaveEvent() {
-        const categoryId = $('#eventCategoryId').val();
-        const name = $('#eventName').val().trim();
-        const color = $('#eventColor').val();
-        
-        if (!name) {
-            showToast('Please enter an event name', 'error');
-            return;
-        }
-        
-            const category = this.categories.find(c => c.id === categoryId);
-        if (category) {
-            const eventId = name.toLowerCase().replace(/\s+/g, '_');
+            const categoryId = $('#eventCategoryId').val();
+            const name = $('#eventName').val().trim();
+            const color = $('#eventColor').val();
             
-                if (category.events.some(e => e.id === eventId)) {
-                showToast('An event with this name already exists', 'error');
+            if (!name) {
+                showToast('Please enter an event name', 'error');
                 return;
             }
             
-            const newEvent = {
-                id: eventId,
-                name: name,
-                color: color,
-                    customFields: [] // Initialize empty custom fields array
-            };
-            
-            category.events.push(newEvent);
+            const category = this.categories.find(c => c.id === categoryId);
+            if (category) {
+                const eventId = name.toLowerCase().replace(/\s+/g, '_');
                 
-                // Save categories and update UI
+                if (category.events.some(e => e.id === eventId)) {
+                    showToast('An event with this name already exists', 'error');
+                    return;
+                }
+                
+                const newEvent = {
+                    id: eventId,
+                    name: name,
+                    color: color,
+                    customFields: []
+                };
+                
+                category.events.push(newEvent);
+                
                 this.saveCategories().then(() => {
-                    // Update the categories list first
                     this.updateCategoriesList();
                     
-                    // Update annotation dropdown if AnnotationManager exists
                     if (typeof AnnotationManager !== 'undefined' && AnnotationManager.updateAnnotationEventDropdown) {
                         AnnotationManager.updateAnnotationEventDropdown();
                     }
                     
-                    // Auto-select the newly created event
                     selectedEventId = eventId;
                     selectedEventName = name;
                     $('#selectedEventDisplay').text(`${category.name} - ${name}`);
                     $('#addAnnotationBtn').prop('disabled', false);
                     
-                    // Add selected class to the new event
                     $(`.event-item[data-event-id="${eventId}"]`).addClass('selected');
                     
-                    // Close modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
                     if (modal) modal.hide();
                     
@@ -956,7 +987,7 @@ $(document).ready(function () {
                             <div class="d-flex align-items-center" style="cursor: pointer;">
                                 <i class="fas fa-chevron-right me-2 collapse-indicator"></i>
                                 <span class="category-name" style="color: ${category.color}">${category.name}</span>
-                        </div>
+                            </div>
                             <div class="category-actions">
                                 <button class="btn btn-sm btn-outline-secondary edit-category">
                                     <i class="fas fa-edit"></i>
@@ -968,28 +999,24 @@ $(document).ready(function () {
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
-                            </div>
+                        </div>
                         <div class="events-list mt-2" style="display: none;">
                             ${this.renderEvents(category.events)}
                         </div>
-                        </div>
+                    </div>
                 `);
                 
-                // Add click handler for collapse/expand and selection
                 categoryElement.find('.category-header .d-flex').on('click', function(e) {
                     e.stopPropagation();
                     const $categoryItem = $(this).closest('.category-item');
                     const eventsList = $categoryItem.find('.events-list');
                     const indicator = $(this).find('.collapse-indicator');
                     
-                    // Update selection state
                     $('.category-item').removeClass('active');
                     $categoryItem.addClass('active');
                     
-                    // Update selected category
                     selectedCategoryId = $categoryItem.data('category-id');
                     
-                    // Update filter dropdown with the selected category's events
                     const category = CategoryManager.categories.find(c => c.id === selectedCategoryId);
                     const filterSelect = $('#annotationFilter');
                     filterSelect.empty();
@@ -1003,7 +1030,6 @@ $(document).ready(function () {
                         });
                     }
                     
-                    // Toggle events list
                     $('.events-list').not(eventsList).slideUp(200);
                     $('.collapse-indicator').not(indicator).removeClass('fa-chevron-down').addClass('fa-chevron-right');
                     
@@ -1011,13 +1037,11 @@ $(document).ready(function () {
                         indicator.toggleClass('fa-chevron-right fa-chevron-down');
                     });
                     
-                    // Enable upload if needed
                     $('#uploadContainer').removeClass('disabled');
                 });
                 
                 categoriesList.append(categoryElement);
                 
-                // If this is the selected category, show its events
                 if (category.id === selectedCategoryId) {
                     categoryElement.addClass('active');
                     categoryElement.find('.events-list').show();
@@ -1051,12 +1075,10 @@ $(document).ready(function () {
                 return;
             }
             
-            // Reset and show modal
             $('#eventName').val('');
             $('#eventColor').val(category.color);
             $('#eventCategoryId').val(categoryId);
             
-            // Show the modal using Bootstrap's modal method
             const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
             modal.show();
         },
@@ -1104,7 +1126,7 @@ $(document).ready(function () {
         },
 
         handleEditCategory() {
-        const categoryId = $('#editCategoryId').val();
+            const categoryId = $('#editCategoryId').val();
             const name = $('#editCategoryName').val().trim();
             const color = $('#editCategoryColor').val();
 
@@ -1129,7 +1151,6 @@ $(document).ready(function () {
                     this.categories = this.categories.filter(c => c.id !== categoryId);
                     this.updateCategoriesList();
                     
-                    // Clear selection if the deleted category was selected
                     if (selectedCategoryId === categoryId) {
                         selectedCategoryId = null;
                         selectedEventId = null;
@@ -1162,144 +1183,62 @@ $(document).ready(function () {
     let selectedEventName = null;
     let player = null;
 
-    // Drag and drop functionality
-    uploadContainer.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadContainer.classList.add('drag-over');
-    });
-
-    uploadContainer.addEventListener('dragleave', () => {
-        uploadContainer.classList.remove('drag-over');
-    });
-
-    uploadContainer.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadContainer.classList.remove('drag-over');
-        const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type.startsWith('video/')) {
-            handleVideoUpload(files[0]);
-        }
-    });
-
-    // File input change handler
+    // Drag and drop functionality (already in VideoManager)
     $('#videoUpload').on('change', function(e) {
         if (e.target.files.length > 0) {
-            handleVideoUpload(e.target.files[0]);
+            VideoManager.handleVideoUpload(e.target.files[0]);
         }
     });
 
-    // Handle video upload
-    function handleVideoUpload(file) {
-        if (!selectedCategoryId) {
-            showToast('Please select a category first!', 'error');
-            $('#videoUpload').val('');
-            return;
-        }
+    // Video player controls
+    if (videoPlayer) {
+        videoPlayer.addEventListener('loadedmetadata', function() {
+            updateDurationDisplay();
+            initializeTimeline();
+        });
 
-        videoFile = file;
-            const formData = new FormData();
-        formData.append('video', file);
-        formData.append('categoryId', selectedCategoryId);
-
-        // Show loading state with progress bar
-        const uploadArea = $('#uploadArea');
-        const originalContent = uploadArea.html();
-        uploadArea.html(`
-            <div class="text-center">
-                <div class="upload-progress mb-3">
-                    <div class="progress" style="height: 20px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                             role="progressbar" style="width: 0%">0%</div>
-                    </div>
-                </div>
-                <h4 class="upload-status">Uploading video...</h4>
-            </div>
-        `);
-
-        $.ajax({
-                url: '/upload',
-            type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-            xhr: function() {
-                const xhr = new window.XMLHttpRequest();
-                xhr.upload.addEventListener('progress', function(e) {
-                    if (e.lengthComputable) {
-                        const percent = Math.round((e.loaded / e.total) * 100);
-                        $('.progress-bar').css('width', percent + '%').text(percent + '%');
-                        $('.upload-status').text(`Uploading video... ${percent}%`);
-                    }
-                }, false);
-                return xhr;
-            },
-            success: function(response) {
-                uploadContainer.classList.add('d-none');
-                videoContainer.classList.remove('d-none');
-                
-                // Initialize video player
-                const newPlayer = initializeVideoPlayer(`/uploads/${response.filename}`);
-                
-                newPlayer.ready(function() {
-                    // Load existing annotations
-                    AnnotationManager.loadExistingAnnotations(response);
-                    showToast('Video loaded successfully!', 'success');
-                });
-            },
-            error: function(xhr) {
-                uploadArea.html(originalContent);
-                showToast(xhr.responseJSON?.error || 'Error uploading video', 'error');
-                $('#videoUpload').val('');
-            }
+        videoPlayer.addEventListener('timeupdate', function() {
+            updateTimeDisplay();
         });
     }
 
-    // Video player controls
-    videoPlayer.addEventListener('loadedmetadata', function() {
-        updateDurationDisplay();
-        initializeTimeline();
-    });
-
-    videoPlayer.addEventListener('timeupdate', function() {
-        updateTimeDisplay();
-    });
-
     $('#playPauseBtn').click(function() {
-        if (videoPlayer.paused) {
+        if (videoPlayer && videoPlayer.paused) {
             videoPlayer.play();
             $(this).find('i').removeClass('fa-play').addClass('fa-pause');
-        } else {
+        } else if (videoPlayer) {
             videoPlayer.pause();
             $(this).find('i').removeClass('fa-pause').addClass('fa-play');
         }
     });
 
-    // Timeline functionality
     function initializeTimeline() {
         const timeline = document.getElementById('timeline');
-        timeline.addEventListener('click', function(e) {
-            const rect = timeline.getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
-            videoPlayer.currentTime = pos * videoPlayer.duration;
-        });
+        if (timeline) {
+            timeline.addEventListener('click', function(e) {
+                const rect = timeline.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                if (videoPlayer) {
+                    videoPlayer.currentTime = pos * videoPlayer.duration;
+                }
+            });
+        }
     }
 
     function updateTimeDisplay() {
-        $('#currentTimeDisplay').text(formatTime(videoPlayer.currentTime));
+        $('#currentTimeDisplay').text(formatTime(videoPlayer ? videoPlayer.currentTime : 0));
     }
 
     function updateDurationDisplay() {
-        $('#durationDisplay').text(formatTime(videoPlayer.duration));
+        $('#durationDisplay').text(formatTime(videoPlayer ? videoPlayer.duration : 0));
     }
 
-    // Helper functions
     function formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // Helper function to show toasts
     window.showToast = function(message, type = 'info') {
         const toast = $(`
             <div class="toast-notification ${type}">
@@ -1341,10 +1280,9 @@ $(document).ready(function () {
                 src: videoUrl
             });
 
-            // Enable markers
             player.on('loadedmetadata', function() {
                 console.log('Video metadata loaded, initializing markers');
-                    updateVideoMarkers();
+                updateVideoMarkers();
             });
 
             setupCustomControls();
@@ -1357,12 +1295,10 @@ $(document).ready(function () {
     function setupCustomControls() {
         if (!player) return;
 
-        // Remove old event listeners
         $(document).off('click', '#playPauseBtn');
         $(document).off('change', '#playbackSpeed');
         $(document).off('input', '#volumeControl');
 
-        // Play/Pause button
         $(document).on('click', '#playPauseBtn', function() {
             if (player.paused()) {
                 player.play();
@@ -1371,20 +1307,17 @@ $(document).ready(function () {
             }
         });
 
-        // Playback speed
         $(document).on('change', '#playbackSpeed', function() {
             const speed = parseFloat(this.value);
             player.playbackRate(speed);
         });
 
-        // Volume control
         $(document).on('input', '#volumeControl', function() {
             const volume = parseFloat(this.value);
             player.volume(volume);
             updateVolumeIcon(volume);
         });
 
-        // Player event handlers
         player.on('play', function() {
             $('#playPauseBtn i').removeClass('fa-play').addClass('fa-pause');
         });
@@ -1412,7 +1345,6 @@ $(document).ready(function () {
         });
     }
 
-    // Helper function to update volume icon
     function updateVolumeIcon(volume) {
         const icon = $('.volume-control i');
         icon.removeClass('fa-volume-up fa-volume-down fa-volume-off fa-volume-mute');
@@ -1430,38 +1362,53 @@ $(document).ready(function () {
 
     function updateVideoMarkers() {
         if (!player || !AnnotationManager.annotations.length) {
-            console.log('No player or annotations available for markers');
             return;
         }
-
-        console.log('Updating video markers');
+    
         const duration = player.duration();
         const progressControl = player.controlBar.progressControl.seekBar.el();
         
-        // Clear existing markers
         $('.vjs-marker').remove();
-
-        // Add markers for each annotation
+    
         AnnotationManager.annotations.forEach(annotation => {
             const category = CategoryManager.categories.find(c => c.id === annotation.categoryId);
             const event = category?.events.find(e => e.id === annotation.eventId);
             
             if (event) {
-                console.log(`Adding marker for event: ${event.name} with color: ${event.color}`);
-                const position = (annotation.time / duration) * 100;
-                const marker = $(`
-                    <div class="vjs-marker" 
-                         style="left: ${position}%; background-color: ${event.color}"
-                         title="${category.name} - ${event.name}: ${formatTime(annotation.time)}"
-                    ></div>
-                `);
-                $(progressControl).append(marker);
+                if (annotation.type === 'complete') {
+                    const startPosition = (annotation.startTime / duration) * 100;
+                    $(progressControl).append(`
+                        <div class="vjs-marker" 
+                             style="left: ${startPosition}%; background-color: ${event.color}"
+                             data-type="start"
+                             title="${category.name} - ${event.name} Start: ${formatTime(annotation.startTime)}"
+                        ></div>
+                    `);
+    
+                    const endPosition = (annotation.endTime / duration) * 100;
+                    $(progressControl).append(`
+                        <div class="vjs-marker" 
+                             style="left: ${endPosition}%; background-color: ${event.color}"
+                             data-type="end"
+                             title="${category.name} - ${event.name} End: ${formatTime(annotation.endTime)}"
+                        ></div>
+                    `);
+                } else if (annotation.type === 'start') {
+                    const position = (annotation.time / duration) * 100;
+                    $(progressControl).append(`
+                        <div class="vjs-marker active" 
+                             style="left: ${position}%; background-color: ${event.color}"
+                             data-type="active"
+                             title="${category.name} - ${event.name} (Active): ${formatTime(annotation.time)}"
+                        ></div>
+                    `);
+                }
             }
         });
     }
 
     function findEventById(eventId) {
-        for (const category of categories) {
+        for (const category of CategoryManager.categories) {
             const event = category.events.find(e => e.id === eventId);
             if (event) return event;
         }
@@ -1472,77 +1419,35 @@ $(document).ready(function () {
         };
     }
 
-    // Update the save annotation handler
-    function saveAnnotations() {
-        if (!videoFile || !selectedCategoryId) {
-            console.error('Missing required data for saving annotations');
-            return;
-        }
-        
-        const annotationData = {
-            filename: videoFile.name,
-            categoryId: selectedCategoryId,
-            annotations: annotations.map(ann => ({
-                time: ann.time,
-                categoryId: ann.categoryId,
-                eventId: ann.eventId
-            }))
-        };
-
-        console.log('Saving annotations:', annotationData); // Debug log
-
-        $.ajax({
-            url: '/save_annotations',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(annotationData),
-            success: function(response) {
-                console.log('Annotations saved successfully:', response);
-                showToast('Annotations saved successfully', 'success');
-            },
-            error: function(xhr, status, error) {
-                console.error('Error saving annotations:', error, xhr.responseText);
-                showToast(xhr.responseJSON?.error || 'Error saving annotations', 'error');
-            }
-        });
-    }
-
-    // Add this to handle keyboard shortcuts
     function setupKeyboardShortcuts() {
         $(document).on('keydown', function(e) {
-            // Only handle shortcuts if video is loaded
             if (!player) return;
 
-            // Don't trigger shortcuts if user is typing in an input
             if ($(e.target).is('input, textarea')) return;
 
             console.log('Key pressed:', e.key);
 
             switch(e.key) {
                 case 'Enter':
-                    // Add annotation
                     e.preventDefault();
-                    if (!$('#annotationModal').is(':visible')) {  // Only if modal is not already open
+                    if (!$('#annotationModal').is(':visible')) {
                         AnnotationManager.showAddAnnotationModal();
                     }
                     break;
 
                 case 'ArrowLeft':
-                    // Seek backward 10 seconds
                     e.preventDefault();
-        const currentTime = player.currentTime();
+                    const currentTime = player.currentTime();
                     player.currentTime(Math.max(0, currentTime - 10));
                     break;
 
                 case 'ArrowRight':
-                    // Seek forward 10 seconds
                     e.preventDefault();
                     const newTime = player.currentTime() + 10;
                     player.currentTime(Math.min(player.duration(), newTime));
                     break;
 
                 case ' ':
-                    // Space bar to play/pause
                     e.preventDefault();
                     if (player.paused()) {
                         player.play();
@@ -1554,7 +1459,6 @@ $(document).ready(function () {
         });
     }
 
-    // Initialize tooltips
     $('[data-bs-toggle="tooltip"]').tooltip();
 
     function downloadFile(filename, data) {
@@ -1569,7 +1473,6 @@ $(document).ready(function () {
         URL.revokeObjectURL(url);
     }
 
-    // Add export functionality
     function exportAnnotations(format) {
         const annotationsData = AnnotationManager.annotations;
 
@@ -1603,7 +1506,6 @@ $(document).ready(function () {
         showToast(`File saved as ${fileName}`, 'success');
     }
 
-    // Add event listener for export dropdown
     $('#exportFormat').on('change', function() {
         const selectedFormat = $(this).val();
         if (selectedFormat) {
@@ -1613,7 +1515,12 @@ $(document).ready(function () {
 
     function convertToCSV(data) {
         const header = 'Time,Category ID,Event ID\n';
-        const rows = data.map(annotation => `${annotation.time},${annotation.categoryId},${annotation.eventId}`);
+        const rows = data.map(annotation => {
+            const time = annotation.type === 'complete' ?
+                `${annotation.startTime}-${annotation.endTime}` :
+                annotation.time;
+            return `${time},${annotation.categoryId},${annotation.eventId}`;
+        });
         return header + rows.join('\n');
     }
 
@@ -1621,7 +1528,12 @@ $(document).ready(function () {
         let xml = '<annotations>\n';
         data.forEach(annotation => {
             xml += `  <annotation>\n`;
-            xml += `    <time>${annotation.time}</time>\n`;
+            if (annotation.type === 'complete') {
+                xml += `    <startTime>${annotation.startTime}</startTime>\n`;
+                xml += `    <endTime>${annotation.endTime}</endTime>\n`;
+            } else {
+                xml += `    <time>${annotation.time}</time>\n`;
+            }
             xml += `    <categoryId>${annotation.categoryId}</categoryId>\n`;
             xml += `    <eventId>${annotation.eventId}</eventId>\n`;
             xml += `  </annotation>\n`;

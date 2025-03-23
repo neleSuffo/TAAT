@@ -1,1 +1,220 @@
-{"id": "human", "name": "human", "color": "#808080", "description": "", "events": [{"id": "walking", "name": "walking", "color": "#808080", "description": "walking event"}]}
+{
+    "id": "human_actions",
+    "name": "Human Actions",
+    "color": "#ff5733",
+    "events": [
+      {
+        "id": "playing_with_object",
+        "name": "Playing with Object",
+        "color": "#fe8800",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          },
+          {
+            "name": "1st Person Age Group",
+            "type": "checkbox",
+            "required": true,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "playing_without_object",
+        "name": "Playing without Object",
+        "color": "#f6d78a",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "pretend_play",
+        "name": "Pretend play",
+        "color": "#ff522d",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "reading_a_book",
+        "name": "Reading a Book",
+        "color": "#e1972f",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "watching_something",
+        "name": "Watching Something",
+        "color": "#000000",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "child_talking",
+        "name": "Child Talking",
+        "color": "#00eb00",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "other_person_talking",
+        "name": "Other Person Talking",
+        "color": "#23ab00",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "overheard_speech",
+        "name": "Overheard Speech",
+        "color": "#46b3ca",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "listening_to_music/audiobook",
+        "name": "Listening to Music/Audiobook",
+        "color": "#00dfb6",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "drawing",
+        "name": "Drawing",
+        "color": "#d48acd",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "crafting_things",
+        "name": "Crafting Things",
+        "color": "#804fce",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "singing/humming",
+        "name": "Singing/Humming",
+        "color": "#219860",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "making_music",
+        "name": "Making Music",
+        "color": "#ff00bf",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "dancing",
+        "name": "Dancing",
+        "color": "#db000c",
+        "customFields": [
+          {
+            "name": "Alone?",
+            "type": "select",
+            "required": true,
+            "options": ["Yes", "No"]
+          }
+        ]
+      },
+      {
+        "id": "exclude",
+        "name": "Exclude",
+        "color": "#4c62ff",
+        "customFields": [
+          {
+            "name": "Type of Scenes",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "name": "Location",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Playroom",
+              "Livingroom",
+              "Bathroom",
+              "Hallway",
+              "Other"
+            ]
+          }
+        ]
+      }
+    ]
+  }

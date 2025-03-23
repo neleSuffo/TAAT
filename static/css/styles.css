@@ -8,6 +8,25 @@ body {
     overflow-y: auto;
 }
 
+/* Active annotation styles */
+.event-item.active {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 3px solid #28a745;
+}
+
+.event-item.active::after {
+    content: '⏺';
+    color: #dc3545;
+    margin-left: 8px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
 .list-group-item {
     cursor: pointer;
     transition: background-color 0.2s;

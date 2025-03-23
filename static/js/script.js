@@ -272,50 +272,58 @@ $(document).ready(function () {
                 showToast('Please select an event', 'error');
                 return;
             }
-    
+        
             const [categoryId, eventId] = eventValue.split(':');
             const currentTime = player.currentTime();
             const isActive = this.activeAnnotations.has(eventId);
-    
-            const fields = {};
-            $('#eventFields [name]').each(function() {
-                const field = $(this);
-                fields[field.attr('name')] = field.attr('type') === 'checkbox' ?
-                    field.is(':checked') : field.val();
-            });
-    
+        
             if (isActive) {
                 // This is an end annotation - use fields from start annotation
                 const startAnnotation = this.activeAnnotations.get(eventId);
+                
+                // Create complete annotation with all fields from start annotation
                 const completeAnnotation = {
                     ...startAnnotation,  // Keep all fields from start annotation
                     endTime: currentTime,
                     duration: currentTime - startAnnotation.time,
                     type: 'complete'
                 };
-    
-                this.annotations.push(completeAnnotation);
-                this.activeAnnotations.delete(eventId);
         
+                // Remove the start annotation from annotations array
+                this.annotations = this.annotations.filter(a => 
+                    !(a.type === 'start' && a.eventId === eventId)
+                );
+        
+                // Add the complete annotation
+                this.annotations.push(completeAnnotation);
+                
+                // Remove from active annotations
+                this.activeAnnotations.delete(eventId);
                 this.updateEventButtonState(eventId, false);
                 showToast('Activity completed', 'success');
             } else {
                 // This is a start annotation
+                const fields = {};
+                $('#eventFields [name]').each(function() {
+                    const field = $(this);
+                    fields[field.attr('name')] = field.attr('type') === 'checkbox' ?
+                        field.is(':checked') : field.val();
+                });
+        
                 const startAnnotation = {
                     time: currentTime,
                     categoryId: categoryId,
                     eventId: eventId,
-                    fields: fields,  // Save fields with start annotation
+                    fields: fields,
                     type: 'start'
                 };
-    
+        
                 this.activeAnnotations.set(eventId, startAnnotation);
                 this.annotations.push(startAnnotation);
-        
                 this.updateEventButtonState(eventId, true);
                 showToast('Activity started', 'success');
             }
-    
+        
             this.saveAnnotations();
             updateVideoMarkers();
             this.updateAnnotationsList();

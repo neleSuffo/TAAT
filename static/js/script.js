@@ -256,23 +256,34 @@ $(document).ready(function () {
         getExportAnnotations() {
             const exportAnnotations = [];
             
-            this.annotations.forEach(startAnnotation => {
-                if (startAnnotation.type === 'start') {
-                    const endAnnotation = this.annotations.find(a => 
-                        a.type === 'end' && a.startAnnotationId === startAnnotation.id
-                    );
+            // Group start and end points by eventId
+            const startAnnotations = this.annotations.filter(a => a.type === 'start');
+            
+            startAnnotations.forEach(startAnnotation => {
+                // Find matching end annotation
+                const endAnnotation = this.annotations.find(a => 
+                    a.type === 'end' && 
+                    a.startAnnotationId === startAnnotation.id
+                );
+                
+                if (endAnnotation) {
+                    // Create complete annotation
+                    const completeAnnotation = {
+                        ...startAnnotation,
+                        fields: startAnnotation.fields,
+                        startTime: startAnnotation.time,
+                        endTime: endAnnotation.time,
+                        duration: endAnnotation.time - startAnnotation.time,
+                        type: 'complete',
+                        videoName: startAnnotation.videoName,
+                        categoryId: startAnnotation.categoryId,
+                        eventId: startAnnotation.eventId
+                    };
                     
-                    if (endAnnotation) {
-                        exportAnnotations.push({
-                            ...startAnnotation,
-                            endTime: endAnnotation.time,
-                            duration: endAnnotation.time - startAnnotation.time,
-                            type: 'complete'
-                        });
-                    }
+                    exportAnnotations.push(completeAnnotation);
                 }
             });
-            
+        
             return exportAnnotations;
         },
 
@@ -1492,16 +1503,16 @@ $(document).ready(function () {
     }
 
     function exportAnnotations(format) {
-        const annotationsData = AnnotationManager.annotations;
-
+        const annotationsData = AnnotationManager.getExportAnnotations();
+    
         if (!annotationsData.length) {
-            showToast('No annotations to export', 'error');
+            showToast('No complete annotations to export', 'error');
             return;
         }
-
+    
         let exportData;
         let fileName;
-
+    
         switch (format) {
             case 'json':
                 exportData = JSON.stringify(annotationsData, null, 2);
@@ -1519,7 +1530,7 @@ $(document).ready(function () {
                 showToast('Unsupported format', 'error');
                 return;
         }
-
+    
         downloadFile(fileName, exportData);
         showToast(`File saved as ${fileName}`, 'success');
     }

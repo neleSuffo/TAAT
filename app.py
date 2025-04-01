@@ -205,79 +205,81 @@ def save_annotations():
         if not all([filename, category_id]):
             return jsonify({'error': 'Missing required data'}), 400
 
-        # Create the annotation file path
+        # Create paths for both storage and processed files
         category_folder = Path(app.config['CATEGORIES_FOLDER']) / category_id
-        annotation_file = category_folder / f"{filename.rsplit('.', 1)[0]}.json"
+        storage_file = category_folder / f"{filename.rsplit('.', 1)[0]}.json"
+        processed_file = category_folder / f"{filename.rsplit('.', 1)[0]}_processed.json"
 
-        # Load existing annotations if file exists
-        if annotation_file.exists():
-            with annotation_file.open('r') as f:
-                existing_data = json.load(f)
-                existing_annotations = existing_data.get('annotations', [])
-        else:
-            existing_annotations = []
+        # Save original annotations to storage file
+        storage_data = {
+            "video_name": filename,
+            "category_id": category_id,
+            "annotations": new_annotations,
+            "activeAnnotations": active_annotations
+        }
 
-        # Process annotations
+        # Save original data
+        with storage_file.open('w') as f:
+            json.dump(storage_data, f, indent=4)
+
+        # Process annotations for the processed file
         processed_annotations = []
-        start_annotations = {}  # event_id -> annotation mapping
-        
-        # Combine existing and new annotations
-        all_annotations = existing_annotations + new_annotations
+        start_annotations = {}
 
         # Process all annotations
-        for ann in all_annotations:
+        for ann in new_annotations:
             event_id = ann.get('event')
             ann_type = ann.get('type')
 
             if ann_type == 'start':
-                # Store start annotation, overwriting any previous start for this event
                 start_annotations[event_id] = ann
             elif ann_type == 'end' and event_id in start_annotations:
-                # Create merged annotation using start annotation as base
                 start_ann = start_annotations[event_id]
-                merged_ann = start_ann.copy()  # Start with all start fields
+                merged_ann = start_ann.copy()
                 
-                # Only update specific end-related fields
+                start_time = start_ann.get('time')
+                end_time = ann.get('time')
+                
                 merged_ann.update({
-                    'endTime': ann.get('time'),
-                    'duration': ann.get('time') - start_ann.get('time', 0),
+                    'startTime': start_time,
+                    'endTime': end_time,
+                    'time': start_time,
+                    'duration': end_time - start_time if start_time is not None and end_time is not None else 0,
                     'type': 'complete'
                 })
                 
-                # Remove the original start annotation if it exists in processed_annotations
+                for key, value in ann.items():
+                    if key not in ['time', 'type', 'event']:
+                        merged_ann[key] = value
+                
                 processed_annotations = [a for a in processed_annotations 
                                       if not (a.get('type') == 'start' and a.get('event') == event_id)]
                 
-                # Add the merged annotation
                 processed_annotations.append(merged_ann)
-                
-                # Remove from start_annotations to prevent duplicates
                 del start_annotations[event_id]
             elif ann_type != 'start' and ann not in processed_annotations:
-                # Add non-start annotations that aren't already present
                 processed_annotations.append(ann)
 
-        # Add any remaining start annotations that haven't been completed
+        # Add remaining start annotations
         for start_ann in start_annotations.values():
             if start_ann not in processed_annotations:
                 processed_annotations.append(start_ann)
 
-        # Prepare the annotation data structure
-        annotation_data = {
+        # Save processed data to separate file
+        processed_data = {
             "video_name": filename,
             "category_id": category_id,
             "annotations": processed_annotations,
             "activeAnnotations": active_annotations
         }
 
-        # Save updated annotations
-        with annotation_file.open('w') as f:
-            json.dump(annotation_data, f, indent=4)
+        with processed_file.open('w') as f:
+            json.dump(processed_data, f, indent=4)
 
         return jsonify({
             'message': 'Annotations saved successfully',
             'activeAnnotations': active_annotations,
-            'annotations': processed_annotations
+            'annotations': storage_data["annotations"]  # Return original annotations
         })
 
     except Exception as e:

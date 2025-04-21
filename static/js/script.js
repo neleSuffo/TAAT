@@ -211,9 +211,9 @@ $(document).ready(function () {
         
                 const annotationElement = $(`
                     <div class="annotation-item mb-2 p-2 rounded cursor-pointer" 
-                         style="border-left: 3px solid ${event.color}; background-color: ${event.color}10"
-                         data-time="${annotation.time}"
-                         data-annotation-index="${index}">
+                        style="border-left: 3px solid ${event.color}; background-color: ${event.color}10"
+                        data-time="${annotation.time}"
+                        data-annotation-index="${index}">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="annotation-content" style="flex-grow: 1;">
                                 <div class="fw-bold">${timeDisplay}</div>
@@ -233,21 +233,24 @@ $(document).ready(function () {
                         </div>
                     </div>
                 `)
-                        // Add click handler for the edit button
+                // Add click handler for the edit button
                 annotationElement.find('.edit-annotation').on('click', (e) => {
                     e.stopPropagation();
                     this.showEditAnnotationModal(annotation, index);
-                });
-
-                // Add click handler for jumping to time
-                annotationElement.on('click', function() {
-                    const time = $(this).data('time');
-                    if (player) {
-                        player.currentTime(time);
+                });                 // Add click handler for the delete button 
+                // Add delete handler
+                annotationElement.find('.delete-annotation').on('click', (e) => {
+                    e.stopPropagation();
+                    const actualIndex = $(e.currentTarget).data('index');
+                    console.log('Deleting annotation at index:', actualIndex);
+                    
+                    if (confirm('Are you sure you want to delete this annotation?')) {
+                        this.annotations.splice(actualIndex, 1);
+                        this.saveAnnotations();
+                        updateVideoMarkers();
+                        this.updateAnnotationsList(); // Refresh the list
                     }
                 });
-        
-                // ...existing click handlers...
                 annotationsList.append(annotationElement);
             });
         },
@@ -411,6 +414,30 @@ $(document).ready(function () {
                 updateVideoMarkers();
             }
         },
+
+        deleteAnnotation(annotation) {
+            if (!annotation || !annotation.id) {
+                console.error('Invalid annotation for deletion:', annotation);
+                return;
+            }
+    
+            $.ajax({
+                url: `/delete_annotation/${annotation.categoryId}/${annotation.videoName}/${annotation.id}`,
+                type: 'DELETE',
+                success: (response) => {
+                    console.log('Annotation deleted successfully:', response);
+                    // Remove the annotation from the local list
+                    this.annotations = this.annotations.filter(a => a.id !== annotation.id);
+                    this.updateAnnotationsList();
+                    updateVideoMarkers();
+                    showToast('Annotation deleted successfully', 'success');
+                },
+                error: (xhr) => {
+                    console.error('Error deleting annotation:', xhr);
+                    showToast(xhr.responseJSON?.error || 'Error deleting annotation', 'error');
+                }
+            });
+        },        
 
         updateEventButtonState(eventId, isActive) {
             const button = $(`.event-item[data-event-id="${eventId}"]`);

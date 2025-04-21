@@ -726,5 +726,56 @@ def delete_category(category_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
+@app.route('/delete_annotation/<category_id>/<filename>/<annotation_id>', methods=['DELETE'])
+def delete_annotation(category_id, filename, annotation_id):
+    """Delete a specific annotation from a video"""
+    try:
+        # Path to the annotation file
+        annotation_file = Path(app.config['CATEGORIES_FOLDER']) / category_id / f"{filename.rsplit('.', 1)[0]}.json"
+        print(f"Resolved annotation file path: {annotation_file}")
+
+        if not annotation_file.exists():
+            print("Annotation file not found.")
+            return jsonify({'error': 'Annotation file not found'}), 404
+
+        # Load the existing annotations
+        with annotation_file.open('r') as f:
+            data = json.load(f)
+
+        annotations = data.get('annotations', [])
+        updated_annotations = []
+
+        # Iterate through annotations to handle deletion logic
+        for ann in annotations:
+            if ann.get('id') == annotation_id:
+                print(f"Deleting annotation: {ann}")
+                # If the annotation to delete is an endpoint, also delete the corresponding start point
+                if ann.get('type') == 'end':
+                    event_id = ann.get('event')
+                    # Remove both the endpoint and its corresponding start point
+                    updated_annotations = [
+                        a for a in annotations if not (
+                            (a.get('event') == event_id and a.get('type') == 'start') or
+                            (a.get('id') == annotation_id)
+                        )
+                    ]
+                    break  # Exit the loop since we've handled the deletion
+                # If the annotation to delete is a start point, skip it
+                continue
+            # Add the annotation to the updated list if it is not being deleted
+            updated_annotations.append(ann)
+
+        # Update the JSON file
+        data['annotations'] = updated_annotations
+        with annotation_file.open('w') as f:
+            json.dump(data, f, indent=4)
+
+        print("Annotation deleted successfully.")
+        return jsonify({'message': 'Annotation deleted successfully'})
+
+    except Exception as e:
+        print(f"Error deleting annotation: {str(e)}")
+        return jsonify({'error': f'Error deleting annotation: {str(e)}'}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)

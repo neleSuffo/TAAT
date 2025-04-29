@@ -505,10 +505,10 @@ $(document).ready(function () {
                             case 'text':
                                 fieldHtml += `
                                     <input type="text" 
-                                           class="form-control" 
-                                           name="${field.name}" 
-                                           value="${fieldValue}"
-                                           ${field.required ? 'required' : ''}>
+                                        class="form-control" 
+                                        name="${field.name}" 
+                                        value="${fieldValue}"
+                                        ${field.required ? 'required' : ''}>
                                 `;
                                 break;
                             case 'select':
@@ -526,20 +526,20 @@ $(document).ready(function () {
                             case 'number':
                                 fieldHtml += `
                                     <input type="number" 
-                                           class="form-control" 
-                                           name="${field.name}" 
-                                           value="${fieldValue}"
-                                           ${field.required ? 'required' : ''}>
+                                        class="form-control" 
+                                        name="${field.name}" 
+                                        value="${fieldValue}"
+                                        ${field.required ? 'required' : ''}>
                                 `;
                                 break;
                             case 'checkbox':
                                 fieldHtml += `
                                     <div class="form-check">
                                         <input type="checkbox" 
-                                               class="form-check-input" 
-                                               name="${field.name}" 
-                                               ${fieldValue ? 'checked' : ''}
-                                               ${field.required ? 'required' : ''}>
+                                            class="form-check-input" 
+                                            name="${field.name}" 
+                                            ${fieldValue ? 'checked' : ''}
+                                            ${field.required ? 'required' : ''}>
                                         <label class="form-check-label">${field.name}</label>
                                     </div>
                                 `;
@@ -559,25 +559,38 @@ $(document).ready(function () {
                 const minutes = parseInt($('#editAnnotationMinutes').val()) || 0;
                 const seconds = parseInt($('#editAnnotationSeconds').val()) || 0;
                 const newTime = minutes * 60 + seconds;
-        
+            
                 if (index >= 0 && index < this.annotations.length) {
                     // Update the time for this point
                     this.annotations[index].time = newTime;
-        
+            
+                    // --- Add this block to update fields ---
+                    const updatedFields = {};
+                    $('#editCustomFields [name]').each(function() {
+                        const field = $(this);
+                        if (field.attr('type') === 'checkbox') {
+                            updatedFields[field.attr('name')] = field.is(':checked');
+                        } else {
+                            updatedFields[field.attr('name')] = field.val();
+                        }
+                    });
+                    this.annotations[index].fields = updatedFields;
+                    // --- End block ---
+            
                     // If this is a start point, update any matching end point's fields
                     if (annotation.type === 'start') {
                         const endPoint = this.annotations.find(a => 
                             a.type === 'end' && a.startAnnotationId === annotation.id
                         );
                         if (endPoint) {
-                            endPoint.fields = annotation.fields; // Keep fields in sync
+                            endPoint.fields = updatedFields; // Keep fields in sync
                         }
                     }
-        
+            
                     this.saveAnnotations();
                     updateVideoMarkers();
                     this.updateAnnotationsList();
-                    
+            
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnotationModal'));
                     modal.hide();
                     showToast(`${pointType} point updated successfully`, 'success');

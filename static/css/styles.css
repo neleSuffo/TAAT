@@ -207,7 +207,7 @@ body {
 
 /* Categories List */
 .categories-list {
-    max-height: 500px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
@@ -264,7 +264,7 @@ body {
 
 /* Annotations List */
 .annotations-list {
-    max-height: 400px;
+    max-height: 800px;
     overflow-y: auto;
 }
 

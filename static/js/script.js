@@ -252,6 +252,13 @@ $(document).ready(function () {
                     }
                 });
                 annotationsList.append(annotationElement);
+
+                annotationElement.on('dblclick', () => {
+                    if (window.player) {
+                        window.player.currentTime(annotation.time);
+                        window.player.play();
+                    }
+                });
             });
         },
         
@@ -564,7 +571,7 @@ $(document).ready(function () {
                     // Update the time for this point
                     this.annotations[index].time = newTime;
             
-                    // --- Add this block to update fields ---
+                    // Collect updated fields
                     const updatedFields = {};
                     $('#editCustomFields [name]').each(function() {
                         const field = $(this);
@@ -574,18 +581,21 @@ $(document).ready(function () {
                             updatedFields[field.attr('name')] = field.val();
                         }
                     });
-                    this.annotations[index].fields = updatedFields;
-                    // --- End block ---
             
-                    // If this is a start point, update any matching end point's fields
+                    // Assign updated fields to both start and end annotation
+                    let startAnnotation, endAnnotation;
                     if (annotation.type === 'start') {
-                        const endPoint = this.annotations.find(a => 
-                            a.type === 'end' && a.startAnnotationId === annotation.id
-                        );
-                        if (endPoint) {
-                            endPoint.fields = updatedFields; // Keep fields in sync
-                        }
+                        startAnnotation = this.annotations[index];
+                        endAnnotation = this.annotations.find(a => a.type === 'end' && a.startAnnotationId === annotation.id);
+                    } else if (annotation.type === 'end') {
+                        endAnnotation = this.annotations[index];
+                        startAnnotation = this.annotations.find(a => a.type === 'start' && a.id === annotation.startAnnotationId);
                     }
+                    if (startAnnotation) startAnnotation.fields = { ...updatedFields };
+                    if (endAnnotation) endAnnotation.fields = { ...updatedFields };
+            
+                    // Also update the annotation object passed to the modal (for filtered/sorted lists)
+                    annotation.fields = { ...updatedFields };
             
                     this.saveAnnotations();
                     updateVideoMarkers();
@@ -593,7 +603,7 @@ $(document).ready(function () {
             
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editAnnotationModal'));
                     modal.hide();
-                    showToast(`${pointType} point updated successfully`, 'success');
+                    showToast('Annotation updated successfully', 'success');
                 }
             });
             

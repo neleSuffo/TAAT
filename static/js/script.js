@@ -271,9 +271,11 @@ $(document).ready(function () {
                 annotationsList.append(annotationElement);
 
                 annotationElement.on('dblclick', () => {
-                    if (window.player) {
-                        window.player.currentTime(annotation.time);
-                        window.player.play();
+                    // Use the correct player reference
+                    const videojsPlayer = player || window.player;
+                    if (videojsPlayer && typeof annotation.time === 'number') {
+                        videojsPlayer.currentTime(annotation.time);
+                        videojsPlayer.play();
                     }
                 });
             });

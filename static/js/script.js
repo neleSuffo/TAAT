@@ -241,14 +241,31 @@ $(document).ready(function () {
                 // Add delete handler
                 annotationElement.find('.delete-annotation').on('click', (e) => {
                     e.stopPropagation();
-                    const actualIndex = $(e.currentTarget).data('index');
-                    console.log('Deleting annotation at index:', actualIndex);
-                    
-                    if (confirm('Are you sure you want to delete this annotation?')) {
-                        this.annotations.splice(actualIndex, 1);
+                    // Use the annotation object from the filtered list directly
+                    const annotationToDelete = annotation;
+                
+                    if (confirm('Are you sure you want to delete this annotation and its pair?')) {
+                        let idsToDelete = [];
+                
+                        if (annotationToDelete.type === 'start') {
+                            idsToDelete.push(annotationToDelete.id);
+                            // Find the paired end annotation
+                            const endAnn = this.annotations.find(a => a.type === 'end' && a.startAnnotationId === annotationToDelete.id);
+                            if (endAnn) idsToDelete.push(endAnn.id);
+                        } else if (annotationToDelete.type === 'end') {
+                            idsToDelete.push(annotationToDelete.id);
+                            // Find the paired start annotation
+                            const startAnn = this.annotations.find(a => a.type === 'start' && a.id === annotationToDelete.startAnnotationId);
+                            if (startAnn) idsToDelete.push(startAnn.id);
+                        }
+                
+                        // Remove both from the annotations array by id
+                        this.annotations = this.annotations.filter(a => !idsToDelete.includes(a.id));
+                
                         this.saveAnnotations();
                         updateVideoMarkers();
-                        this.updateAnnotationsList(); // Refresh the list
+                        this.updateAnnotationsList();
+                        showToast('Annotation pair deleted successfully', 'success');
                     }
                 });
                 annotationsList.append(annotationElement);

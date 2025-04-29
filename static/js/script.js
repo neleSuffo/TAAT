@@ -568,9 +568,6 @@ $(document).ready(function () {
                 const newTime = minutes * 60 + seconds;
             
                 if (index >= 0 && index < this.annotations.length) {
-                    // Update the time for this point
-                    this.annotations[index].time = newTime;
-            
                     // Collect updated fields
                     const updatedFields = {};
                     $('#editCustomFields [name]').each(function() {
@@ -582,20 +579,23 @@ $(document).ready(function () {
                         }
                     });
             
-                    // Assign updated fields to both start and end annotation
+                    // Assign updated fields and time to both start and end annotation
                     let startAnnotation, endAnnotation;
                     if (annotation.type === 'start') {
                         startAnnotation = this.annotations[index];
                         endAnnotation = this.annotations.find(a => a.type === 'end' && a.startAnnotationId === annotation.id);
+                        if (startAnnotation) startAnnotation.time = newTime;
                     } else if (annotation.type === 'end') {
                         endAnnotation = this.annotations[index];
                         startAnnotation = this.annotations.find(a => a.type === 'start' && a.id === annotation.startAnnotationId);
+                        if (endAnnotation) endAnnotation.time = newTime;
                     }
                     if (startAnnotation) startAnnotation.fields = { ...updatedFields };
                     if (endAnnotation) endAnnotation.fields = { ...updatedFields };
             
                     // Also update the annotation object passed to the modal (for filtered/sorted lists)
                     annotation.fields = { ...updatedFields };
+                    annotation.time = newTime;
             
                     this.saveAnnotations();
                     updateVideoMarkers();

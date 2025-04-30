@@ -241,26 +241,38 @@ $(document).ready(function () {
                 // Add delete handler
                 annotationElement.find('.delete-annotation').on('click', (e) => {
                     e.stopPropagation();
-                    // Use the annotation object from the filtered list directly
-                    const annotationToDelete = annotation;
+                    console.log('Delete button clicked for annotation:', annotation);
+                
+                    if (!annotation) {
+                        console.error('Annotation is undefined');
+                        return;
+                    }
+                
+                    if (!this.annotations || !Array.isArray(this.annotations)) {
+                        console.error('Annotations array is invalid:', this.annotations);
+                        return;
+                    }
                 
                     if (confirm('Are you sure you want to delete this annotation and its pair?')) {
-                        let idsToDelete = [];
+                        console.log('Annotations before deletion:', this.annotations);
                 
-                        if (annotationToDelete.type === 'start') {
-                            idsToDelete.push(annotationToDelete.id);
-                            // Find the paired end annotation
-                            const endAnn = this.annotations.find(a => a.type === 'end' && a.startAnnotationId === annotationToDelete.id);
-                            if (endAnn) idsToDelete.push(endAnn.id);
-                        } else if (annotationToDelete.type === 'end') {
-                            idsToDelete.push(annotationToDelete.id);
-                            // Find the paired start annotation
-                            const startAnn = this.annotations.find(a => a.type === 'start' && a.id === annotationToDelete.startAnnotationId);
-                            if (startAnn) idsToDelete.push(startAnn.id);
+                        if (annotation.type === 'start') {
+                            // Keep only annotations that are neither the start annotation nor its paired end annotation
+                            this.annotations = this.annotations.filter(a => 
+                                !(a.type === 'start' && a.id === annotation.id) && 
+                                !(a.type === 'end' && a.startAnnotationId === annotation.id)
+                            );
+                        } else if (annotation.type === 'end') {
+                            // Keep only annotations that are neither the end annotation nor its paired start annotation
+                            this.annotations = this.annotations.filter(a => 
+                                !(a.type === 'end' && a.startAnnotationId === annotation.startAnnotationId) && 
+                                !(a.type === 'start' && a.id === annotation.startAnnotationId)
+                            );
                         }
                 
-                        // Remove both from the annotations array by id
-                        this.annotations = this.annotations.filter(a => !idsToDelete.includes(a.id));
+                        console.log('Annotations after deletion:', this.annotations);
+                        console.log('Start annotations after deletion:', this.annotations.filter(a => a.type === 'start').length);
+                        console.log('End annotations after deletion:', this.annotations.filter(a => a.type === 'end').length);
                 
                         this.saveAnnotations();
                         updateVideoMarkers();

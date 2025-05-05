@@ -57,7 +57,7 @@ $(document).ready(function () {
                     <div class="upload-progress mb-3">
                         <div class="progress" style="height: 20px;">
                             <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                                 role="progressbar" style="width: 0%">0%</div>
+                                role="progressbar" style="width: 0%">0%</div>
                         </div>
                     </div>
                     <h4 class="upload-status">Uploading video...</h4>
@@ -1548,12 +1548,12 @@ $(document).ready(function () {
                 case 'ArrowLeft':
                     e.preventDefault();
                     const currentTime = player.currentTime();
-                    player.currentTime(Math.max(0, currentTime - 10));
+                    player.currentTime(Math.max(0, currentTime - 1));
                     break;
 
                 case 'ArrowRight':
                     e.preventDefault();
-                    const newTime = player.currentTime() + 10;
+                    const newTime = player.currentTime() + 1;
                     player.currentTime(Math.min(player.duration(), newTime));
                     break;
 

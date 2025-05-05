@@ -1346,7 +1346,8 @@ $(document).ready(function () {
     function formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
-        return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        const milsecs = Math.floor((seconds - Math.floor(seconds)) * 1000);
+        return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(milsecs).padStart(3, '0')}`;
     }
 
     window.showToast = function(message, type = 'info') {

@@ -211,6 +211,10 @@ body {
     overflow-y: auto;
 }
 
+.annotation-item.highlighted {
+    background: #ffeeba !important;
+    border-color: #ffc107 !important;
+}
 /* Simplified Category Styles */
 .category-item {
     background: white;

@@ -106,7 +106,8 @@ $(document).ready(function () {
         activeAnnotations: new Map(),
         selectedCategory: null,
         selectedEvent: null,
-        
+        lastEventFieldValues: {},
+
         init() {
             this.setupEventListeners();
         },
@@ -351,6 +352,14 @@ $(document).ready(function () {
             const currentTime = player.currentTime();
             const isActive = this.activeAnnotations.has(eventId);
         
+            const fields = {};
+            $('#eventFields [name]').each(function() {
+                const field = $(this);
+                fields[field.attr('name')] = field.attr('type') === 'checkbox' ?
+                    field.is(':checked') : field.val();
+            });
+            this.lastEventFieldValues[eventId] = { ...fields };
+            
             if (isActive) {
                 // This is an end annotation - use fields from start annotation
                 const startAnnotation = this.activeAnnotations.get(eventId);
@@ -701,9 +710,25 @@ $(document).ready(function () {
                 const [categoryId, eventId] = e.target.value.split(':');
                 const category = CategoryManager.categories.find(c => c.id === categoryId);
                 const event = category?.events.find(e => e.id === eventId);
-                
+            
                 if (event?.customFields) {
                     this.renderCustomFields(event.customFields);
+            
+                    // --- Add this block to pre-fill last-used values ---
+                    const lastValues = this.lastEventFieldValues[eventId];
+                    if (lastValues) {
+                        $('#eventFields [name]').each(function() {
+                            const field = $(this);
+                            const name = field.attr('name');
+                            if (field.attr('type') === 'checkbox') {
+                                field.prop('checked', !!lastValues[name]);
+                            } else {
+                                field.val(lastValues[name] || '');
+                            }
+                        });
+                    }
+                    // --- End block ---
+            
                 } else {
                     $('#eventFields').empty();
                 }

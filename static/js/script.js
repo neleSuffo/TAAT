@@ -1468,6 +1468,7 @@ $(document).ready(function () {
             $('#currentTimeDisplay').text(formatTime(currentTime));
             $('#durationDisplay').text(formatTime(duration));
             $('#annotationTimeDisplay').text(formatTime(currentTime));
+            highlightCurrentAnnotation(); // <-- Add this line
         });
 
         player.on('volumechange', function() {
@@ -1553,6 +1554,44 @@ $(document).ready(function () {
             name: 'Unknown Event',
             color: '#cccccc'
         };
+    }
+
+    function highlightCurrentAnnotation() {
+        if (!AnnotationManager.annotations.length) return;
+        const currentTime = player.currentTime();
+    
+        // Find the annotation that matches the current time
+        let bestMatchIndex = -1;
+        AnnotationManager.annotations.forEach((annotation, idx) => {
+            if (annotation.type === 'start') {
+                const endAnn = AnnotationManager.annotations.find(a => a.type === 'end' && a.startAnnotationId === annotation.id);
+                if (endAnn && currentTime >= annotation.time && currentTime <= endAnn.time) {
+                    bestMatchIndex = idx;
+                }
+            } else if (annotation.type !== 'end' && Math.abs(annotation.time - currentTime) < 1) {
+                bestMatchIndex = idx;
+            }
+        });
+    
+        // Remove previous highlights
+        $('.annotation-item').removeClass('highlighted');
+    
+        // Highlight and scroll to the matched annotation
+        if (bestMatchIndex !== -1) {
+            const $item = $(`.annotation-item[data-annotation-index="${bestMatchIndex}"]`);
+            $item.addClass('highlighted');
+            // Scroll into view if not visible
+            const container = document.getElementById('annotationsList');
+            if ($item.length && container) {
+                const itemTop = $item[0].offsetTop;
+                const itemBottom = itemTop + $item[0].offsetHeight;
+                const containerTop = container.scrollTop;
+                const containerBottom = containerTop + container.clientHeight;
+                if (itemTop < containerTop || itemBottom > containerBottom) {
+                    container.scrollTop = itemTop - 20;
+                }
+            }
+        }
     }
 
     function setupKeyboardShortcuts() {

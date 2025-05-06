@@ -191,6 +191,8 @@ $(document).ready(function () {
                 const category = CategoryManager.categories.find(c => c.id === annotation.categoryId);
                 const event = category?.events.find(e => e.id === annotation.eventId);
                 
+                const globalIndex = AnnotationManager.annotations.indexOf(annotation);
+
                 if (!category || !event) return;
         
                 let timeDisplay;
@@ -214,7 +216,7 @@ $(document).ready(function () {
                     <div class="annotation-item mb-2 p-2 rounded cursor-pointer" 
                         style="border-left: 3px solid ${event.color}; background-color: ${event.color}10"
                         data-time="${annotation.time}"
-                        data-annotation-index="${index}">
+                        data-annotation-index="${globalIndex}">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="annotation-content" style="flex-grow: 1;">
                                 <div class="fw-bold">${timeDisplay}</div>
@@ -1560,27 +1562,30 @@ $(document).ready(function () {
         if (!AnnotationManager.annotations.length) return;
         const currentTime = player.currentTime();
     
-        // Find the annotation that matches the current time
-        let bestMatchIndex = -1;
+        // Collect all active annotation indexes
+        const activeIndexes = [];
         AnnotationManager.annotations.forEach((annotation, idx) => {
             if (annotation.type === 'start') {
                 const endAnn = AnnotationManager.annotations.find(a => a.type === 'end' && a.startAnnotationId === annotation.id);
                 if (endAnn && currentTime >= annotation.time && currentTime <= endAnn.time) {
-                    bestMatchIndex = idx;
+                    activeIndexes.push(idx);
                 }
             } else if (annotation.type !== 'end' && Math.abs(annotation.time - currentTime) < 1) {
-                bestMatchIndex = idx;
+                activeIndexes.push(idx);
             }
         });
     
         // Remove previous highlights
         $('.annotation-item').removeClass('highlighted');
     
-        // Highlight and scroll to the matched annotation
-        if (bestMatchIndex !== -1) {
-            const $item = $(`.annotation-item[data-annotation-index="${bestMatchIndex}"]`);
-            $item.addClass('highlighted');
-            // Scroll into view if not visible
+        // Highlight all active annotations
+        activeIndexes.forEach(idx => {
+            $(`.annotation-item[data-annotation-index="${idx}"]`).addClass('highlighted');
+        });
+    
+        // Optionally scroll to the first active annotation
+        if (activeIndexes.length > 0) {
+            const $item = $(`.annotation-item[data-annotation-index="${activeIndexes[0]}"]`);
             const container = document.getElementById('annotationsList');
             if ($item.length && container) {
                 const itemTop = $item[0].offsetTop;

@@ -23,7 +23,7 @@ A web-based tool for temporal annotation of videos. This tool allows users to cr
 ### Setup
 1. Clone the repository:
 ```bash
-git clone https://github.com/ibrahimabdelaal/Temporal-Action-Annotation-Toolkit-TAAT.git
+git clone https://github.com/neleSuffo/TAAT
 cd temporal-annotation-tool
 ```
 

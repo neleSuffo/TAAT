@@ -24,7 +24,7 @@ A web-based tool for temporal annotation of videos. This tool allows users to cr
 1. Clone the repository:
 ```bash
 git clone https://github.com/neleSuffo/TAAT
-cd temporal-annotation-tool
+cd TAAT
 ```
 
 2. Install dependencies:
@@ -38,8 +38,8 @@ python app.py
 
 ## Usage
 
-### Video Upload
-- Place your video files in the `uploads` folder. The application will process these files when uploaded through the web interface.
+### Annotation Upload
+- Place your annotations files in the `Corresponding Category` folder. The application will process these files when a video file with the same name is uploaded through the web interface.
 
 ### Category Setup
 1. Click "New Category" to create a category
@@ -54,7 +54,7 @@ python app.py
 4. Use keyboard shortcuts or buttons to add annotations:
    - Enter: Add annotation
    - Space: Play/Pause
-   - Left/Right arrows: Seek 10 seconds
+   - Left/Right arrows: Skip 1 second
 
 ### Managing Annotations
 - Filter annotations by event type

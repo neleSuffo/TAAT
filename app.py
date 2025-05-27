@@ -17,6 +17,7 @@ from datetime import datetime
 from pathlib import Path
 import shutil
 from werkzeug.utils import secure_filename
+from copy import deepcopy
 
 app = Flask(__name__)
 # Configure upload limits and directories
@@ -29,6 +30,68 @@ app.config['MAX_CONTENT_LENGTH'] = 2 * 1000 * 1024 * 1024  # 500MB max file size
 # Create necessary directories
 for directory in ['uploads', 'annotations', 'categories', 'config']:
     os.makedirs(directory, exist_ok=True)
+
+def reprocess_raw_annotations(raw_annotations_list):
+    """
+    Converts a list of raw 'start' and 'end' annotations into a list of
+    'complete' (paired) annotations and unpaired 'start' annotations.
+    Relies on 'start' annotations having a unique 'id' and 'end' annotations
+    having a 'startAnnotationId' linking to that unique 'id'.
+    """
+    processed_annotations = []
+    # Stores start annotations keyed by their unique 'id'
+    active_start_points_by_unique_id = {}
+
+    for ann_data in raw_annotations_list:
+        ann_type = ann_data.get('type')
+        
+        if ann_type == 'start':
+            unique_start_id = ann_data.get('id')
+            if unique_start_id:
+                # Store a deepcopy to avoid modifying the original list if it's used elsewhere
+                active_start_points_by_unique_id[unique_start_id] = deepcopy(ann_data)
+            else:
+                # This should ideally not happen if frontend ensures 'id' for start annotations
+                print(f"Warning: Encountered 'start' annotation missing a unique 'id': {ann_data}")
+                processed_annotations.append(deepcopy(ann_data)) # Add as is, or decide to skip
+        elif ann_type == 'end':
+            linked_start_id = ann_data.get('startAnnotationId')
+            if linked_start_id and linked_start_id in active_start_points_by_unique_id:
+                start_ann_instance = active_start_points_by_unique_id.pop(linked_start_id) # Paired, so remove
+                
+                # Create the 'complete' annotation based on the start annotation's data
+                complete_ann = deepcopy(start_ann_instance)
+                
+                start_time = start_ann_instance.get('time')
+                end_time = ann_data.get('time') # Time from the current 'end' annotation
+                
+                complete_ann.update({
+                    'startTime': start_time,
+                    'endTime': end_time,
+                    'duration': (end_time - start_time) if start_time is not None and end_time is not None else 0,
+                    'type': 'complete',
+                    # 'time' field for 'complete' is typically the startTime
+                })
+                # Remove fields specific to start/end individual points if not needed for 'complete'
+                complete_ann.pop('id', None) # Original unique id of the start point
+                complete_ann.pop('startAnnotationId', None) # Not relevant for complete
+
+                processed_annotations.append(complete_ann)
+            else:
+                # Orphaned end annotation (no matching start found or start already paired)
+                print(f"Warning: Orphaned 'end' annotation or missing start pair for startAnnotationId '{linked_start_id}': {ann_data}")
+                processed_annotations.append(deepcopy(ann_data)) # Add as is, or decide to skip
+        else:
+            # Annotations that are neither 'start' nor 'end' (e.g., already 'complete' if input can have them)
+            # Or a 'start' annotation that was missing its 'id' and added above.
+            processed_annotations.append(deepcopy(ann_data))
+
+    # Add any remaining (unpaired) start annotations from active_start_points_by_unique_id
+    for unpaired_start_ann in active_start_points_by_unique_id.values():
+        processed_annotations.append(deepcopy(unpaired_start_ann)) # These are still 'start' type
+        
+    return processed_annotations
+
 
 ind=None
 @app.route('/')
@@ -199,96 +262,154 @@ def save_annotations():
 
         filename = data.get('filename')
         category_id = data.get('categoryId')
-        new_annotations = data.get('annotations', [])
-        active_annotations = data.get('activeAnnotations', {})
+        raw_annotations_from_client = data.get('annotations', [])
+        active_annotations_map_from_client = data.get('activeAnnotations', {})
 
         if not all([filename, category_id]):
-            return jsonify({'error': 'Missing required data'}), 400
+            return jsonify({'error': 'Missing required data (filename, categoryId)'}), 400
 
         # Create paths for both storage and processed files
         category_folder = Path(app.config['CATEGORIES_FOLDER']) / category_id
-        storage_file = category_folder / f"{filename.rsplit('.', 1)[0]}.json"
-        processed_file = category_folder / f"{filename.rsplit('.', 1)[0]}_processed.json"
+        category_folder.mkdir(parents=True, exist_ok=True) # Ensure category folder exists
 
-        # Save original annotations to storage file
-        storage_data = {
+        storage_file_path = category_folder / f"{filename.rsplit('.', 1)[0]}.json"
+        processed_file_path = category_folder / f"{filename.rsplit('.', 1)[0]}_processed.json"
+
+        raw_storage_data = {
             "video_name": filename,
             "category_id": category_id,
-            "annotations": new_annotations,
-            "activeAnnotations": active_annotations
+            "annotations": raw_annotations_from_client, # The list of start/end points
+            "activeAnnotations": active_annotations_map_from_client # Client's map of active event types
         }
+        with storage_file_path.open('w') as f:
+            json.dump(raw_storage_data, f, indent=4)
 
-        # Save original data
-        with storage_file.open('w') as f:
-            json.dump(storage_data, f, indent=4)
+        # --- Process raw annotations to create 'complete' and unpaired 'start' annotations ---
+        processed_annotations_list = reprocess_raw_annotations(raw_annotations_from_client)
 
-        # Process annotations for the processed file
-        processed_annotations = []
-        start_annotations = {}
-
-        # Process all annotations
-        for ann in new_annotations:
-            event_id = ann.get('event')
-            ann_type = ann.get('type')
-
-            if ann_type == 'start':
-                start_annotations[event_id] = ann
-            elif ann_type == 'end' and event_id in start_annotations:
-                start_ann = start_annotations[event_id]
-                merged_ann = start_ann.copy()
-                
-                start_time = start_ann.get('time')
-                end_time = ann.get('time')
-                
-                merged_ann.update({
-                    'startTime': start_time,
-                    'endTime': end_time,
-                    'time': start_time,
-                    'duration': end_time - start_time if start_time is not None and end_time is not None else 0,
-                    'type': 'complete'
-                })
-                
-                for key, value in ann.items():
-                    if key not in ['time', 'type', 'event']:
-                        merged_ann[key] = value
-                
-                processed_annotations = [a for a in processed_annotations 
-                                      if not (a.get('type') == 'start' and a.get('event') == event_id)]
-                
-                processed_annotations.append(merged_ann)
-                del start_annotations[event_id]
-            elif ann_type != 'start' and ann not in processed_annotations:
-                processed_annotations.append(ann)
-
-        # Add remaining start annotations
-        for start_ann in start_annotations.values():
-            if start_ann not in processed_annotations:
-                processed_annotations.append(start_ann)
-
-        # Save processed data to separate file
-        processed_data = {
+        processed_data_to_save = {
             "video_name": filename,
             "category_id": category_id,
-            "annotations": processed_annotations,
-            "activeAnnotations": active_annotations
+            "annotations": processed_annotations_list,
+             # activeAnnotations in processed file might be different or not needed if UI reconstructs from raw
+            "activeAnnotations": active_annotations_map_from_client # Or derive from processed_annotations_list if needed
         }
-
-        with processed_file.open('w') as f:
-            json.dump(processed_data, f, indent=4)
+        with processed_file_path.open('w') as f:
+            json.dump(processed_data_to_save, f, indent=4)
 
         return jsonify({
             'message': 'Annotations saved successfully',
-            'activeAnnotations': active_annotations,
-            'annotations': storage_data["annotations"]  # Return original annotations
+            # Return the raw annotations and active map, as the client sent them
+            'annotations': raw_annotations_from_client,
+            'activeAnnotations': active_annotations_map_from_client
         })
 
     except Exception as e:
-        print(f"Error saving annotation: {str(e)}")
-        return jsonify({
-            'error': f'Error saving annotation: {str(e)}',
-            'data_received': data
-        }), 500
+        print(f"Error saving annotations: {str(e)}") # Log the full error
+        # Be cautious about sending back raw 'data' in production
+        return jsonify({'error': f'Error saving annotations: {str(e)}'}), 500
 
+@app.route('/edit_annotations', methods=['POST'])
+def edit_annotations():
+    """Edit a specific point (start or end) of an annotation instance."""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        filename = data.get('filename')
+        category_id = data.get('categoryId')
+        
+        # --- Parameters to identify the annotation and the change ---
+        # The unique 'id' of the 'start' annotation of the pair being edited.
+        instance_id_to_update = data.get('instanceId') 
+        # Specifies which point of the pair is being modified: 'start' or 'end'.
+        point_to_edit = data.get('pointToEdit') 
+        new_time = data.get('newTime')
+        new_fields = data.get('newFields', None) # Optional: if fields are also updated
+
+        if not all([filename, category_id, instance_id_to_update, point_to_edit, new_time is not None]):
+            return jsonify({'error': 'Missing required data for edit (filename, categoryId, instanceId, pointToEdit, newTime)'}), 400
+
+        if point_to_edit not in ['start', 'end']:
+            return jsonify({'error': f'Invalid pointToEdit value: {pointToEdit}. Must be "start" or "end".'}), 400
+
+        category_folder = Path(app.config['CATEGORIES_FOLDER']) / category_id
+        # Path to the raw storage file (contains start/end points)
+        raw_storage_filename = f"{filename.rsplit('.', 1)[0]}.json"
+        storage_file_path = category_folder / raw_storage_filename
+        
+        processed_filename = f"{filename.rsplit('.', 1)[0]}_processed.json"
+        processed_file_path = category_folder / processed_filename
+
+
+        if not storage_file_path.exists():
+            return jsonify({'error': 'Annotations (raw storage) file not found'}), 404
+
+        with storage_file_path.open('r') as f:
+            storage_data = json.load(f) # This contains the 'annotations' list of raw start/end points
+
+        raw_annotations_list = storage_data.get('annotations', [])
+        updated_in_raw = False
+
+        for ann in raw_annotations_list:
+            if point_to_edit == 'start' and ann.get('type') == 'start' and ann.get('id') == instance_id_to_update:
+                ann['time'] = new_time
+                if new_fields is not None:
+                    ann['fields'] = new_fields
+                updated_in_raw = True
+                # If start's fields change, the corresponding end's fields should also reflect this
+                # (assuming fields are shared for the pair and defined by the start point)
+                if new_fields is not None:
+                    for end_ann_candidate in raw_annotations_list:
+                        if end_ann_candidate.get('type') == 'end' and end_ann_candidate.get('startAnnotationId') == instance_id_to_update:
+                            end_ann_candidate['fields'] = new_fields # Keep fields consistent
+                            break 
+                break 
+            elif point_to_edit == 'end' and ann.get('type') == 'end' and ann.get('startAnnotationId') == instance_id_to_update:
+                ann['time'] = new_time
+                # If new_fields are provided when editing an 'end' point, it implies updating the pair's fields.
+                # So, update the corresponding 'start' point's fields as well.
+                if new_fields is not None:
+                    ann['fields'] = new_fields # Update end's fields
+                    for start_ann_candidate in raw_annotations_list:
+                        if start_ann_candidate.get('type') == 'start' and start_ann_candidate.get('id') == instance_id_to_update:
+                            start_ann_candidate['fields'] = new_fields # Keep fields consistent
+                            break
+                updated_in_raw = True
+                break
+        
+        if not updated_in_raw:
+            return jsonify({'error': f'Annotation instance with ID {instance_id_to_update} (for point {point_to_edit}) not found in raw data'}), 404
+
+        # Save the updated raw annotations back to the storage file
+        storage_data['annotations'] = raw_annotations_list
+        with storage_file_path.open('w') as f:
+            json.dump(storage_data, f, indent=4)
+
+        # --- Reprocess the updated raw annotations to update the processed file ---
+        processed_annotations_list_updated = reprocess_raw_annotations(raw_annotations_list)
+
+        processed_data_to_save = {
+            "video_name": filename,
+            "category_id": category_id,
+            "annotations": processed_annotations_list_updated,
+            "activeAnnotations": storage_data.get('activeAnnotations', {}) # Keep client's active map
+        }
+        with processed_file_path.open('w') as f:
+            json.dump(processed_data_to_save, f, indent=4)
+
+        return jsonify({
+            'message': 'Annotation updated successfully',
+            # Return the updated raw annotations list
+            'annotations': raw_annotations_list, 
+            'activeAnnotations': storage_data.get('activeAnnotations', {})
+        })
+
+    except Exception as e:
+        print(f"Error editing annotation: {str(e)}")
+        return jsonify({'error': f'Error editing annotation: {str(e)}'}), 500
+        
 @app.route('/get_annotation_state/<category_id>/<filename>/<event_id>', methods=['GET'])
 def get_annotation_state(category_id, filename, event_id):
     """Check if an event has an active (started but not ended) annotation"""

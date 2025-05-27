@@ -44,7 +44,6 @@ $(document).ready(function () {
                 $('#videoUpload').val('');
                 return;
             }
-
             videoFile = file;
             const formData = new FormData();
             formData.append('video', file);
@@ -1559,6 +1558,7 @@ $(document).ready(function () {
     }
 
     function highlightCurrentAnnotation() {
+        if (typeof selectedCategoryId !== "undefined" && selectedCategoryId === "review") return;
         if (!AnnotationManager.annotations.length) return;
         const currentTime = player.currentTime();
     

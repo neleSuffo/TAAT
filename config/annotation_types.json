@@ -19,6 +19,7 @@
                                 "Livingroom",
                                 "Bathroom",
                                 "Hallway",
+                                "Outside",
                                 "Other"
                             ]
                         }
@@ -1873,6 +1874,7 @@
                                 "Livingroom",
                                 "Bathroom",
                                 "Hallway",
+                                "Outside",
                                 "Other"
                             ]
                         }
@@ -3846,6 +3848,7 @@
                                 "Livingroom",
                                 "Bathroom",
                                 "Hallway",
+                                "Outside",
                                 "Other"
                             ]
                         }
